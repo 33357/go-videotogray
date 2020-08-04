@@ -1,6 +1,8 @@
 package main
+
 import (
 	"bytes"
+	"encoding/binary"
 	"fmt"
 	"image"
 	"image/draw"
@@ -8,8 +10,16 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"strconv"
 )
+
+func main() {
+	source := "./image/yjm.gif" //输入图片
+	target := "./image/vb/"                   //输出图片
+
+	ff, _ := ioutil.ReadFile(source) //读取文件
+	bbb := bytes.NewBuffer(ff)
+	SplitAnimatedGIF(bbb,target)
+}
 
 func SplitAnimatedGIF(reader io.Reader,outPath string) (err error) {
 	defer func() {
@@ -27,25 +37,38 @@ func SplitAnimatedGIF(reader io.Reader,outPath string) (err error) {
 	draw.Draw(overpaintImage, overpaintImage.Bounds(), gif.Image[0], image.Point{}, draw.Src)
 
 	for i, srcImg := range gif.Image {
-		draw.Draw(overpaintImage, overpaintImage.Bounds(), srcImg, image.Point{}, draw.Over)
-		array:=hdImage(overpaintImage)
+			draw.Draw(overpaintImage, overpaintImage.Bounds(), srcImg, image.Point{}, draw.Over)
+			array := hdImage(overpaintImage)
+			//fmt.Println(len(array))
+			//for j:=0;j<len(array);j++{
+			//	if array[j]!=0 {
+			//		fmt.Println(j,array[j])
+			//	}
+			//}
+			//fmt.Println(array[19403])
 
-		file, err := os.Create(fmt.Sprintf("%s%d%s", outPath, i, ".vb"))
-		if err != nil {
-			return err
-		}
-		str:=""
-		for _,v := range array{
-			str+=strconv.Itoa(int(v))+","
-		}
+			file, err := os.Create(fmt.Sprintf("%s%d%s", outPath, i, ".vb"))
+			if err != nil {
+				return err
+			}
+			buf := ArraytoBuffer(array)
+			_, err = file.Write(buf.Bytes())
 
-		_, err = file.WriteString(str)
+			if err != nil {
+				return err
+			}
+			file.Close()
 
-		if err != nil {
-			return err
-		}
-		file.Close()
-		println(i)
+			//file, err = os.Create(fmt.Sprintf("%s%d%s", outPath, i, ".png"))
+			//if err != nil {
+			//	return err
+			//}
+			//
+			//err = png.Encode(file, overpaintImage)
+			//if err != nil {
+			//	return err
+			//}
+			println(i)
 	}
 	return nil
 }
@@ -73,17 +96,6 @@ func getGifDimensions(gif *gif.GIF) (x, y int) {
 
 	return highestX - lowestX, highestY - lowestY
 }
-
-func main() {
-	source := "./image/yjm_w1020_h300_f12.gif" //输入图片
-	target := "./image/png/"                   //输出图片
-
-	ff, _ := ioutil.ReadFile(source) //读取文件
-	bbb := bytes.NewBuffer(ff)
-	SplitAnimatedGIF(bbb,target)
-}
-
-
 //图片灰化处理
 func hdImage(m image.Image) [] uint32 {
 	bounds := m.Bounds()
@@ -93,9 +105,42 @@ func hdImage(m image.Image) [] uint32 {
 	for i := 0; i < dx; i++ {
 		for j := 0; j < dy; j++ {
 			colorRgb := m.At(i, j)
-			r, g, b, _ := colorRgb.RGBA()
-			array[i*(j+1)]=r * 299/1000 + g * 587/1000+ b * 114/1000
+			_r, _g, _b, _ := colorRgb.RGBA()
+			r := _r >> 8
+			g := _g >> 8
+			b := _b >> 8
+			hd:=r * 299/1000 +g * 587/1000+ b * 114/1000
+			array[i+j*dx]=changeColorSize(hd, 25)
+			//if array[i+j*dx] != 0 {
+			//	fmt.Println(i,j,i+j*dx,array[i+j*dx])
+			//}
 		}
 	}
 	return array
+}
+
+func ArraytoBuffer(arr [] uint32) *bytes.Buffer{
+	buf := new(bytes.Buffer)
+	for _,value := range arr{
+		err := binary.Write(buf, binary.LittleEndian, uint8(value))
+		if err != nil {
+			fmt.Println("binary.Read failed:", err)
+		}
+	}
+	return buf
+}
+
+func changeColorSize(gray uint32, size uint32) uint32 {
+	if gray<255 {
+		var i uint32 = 0
+		g := gray*size/255
+		for ;i<size;i++{
+			if g>=i && g<i+1 {
+				return i
+			}
+		}
+		return 0
+	}else{
+		return size-1
+	}
 }
