@@ -6,66 +6,50 @@
 </head>
 <body>
 
-<canvas id="myCanvas" width="1280" height="720" style="border:1px solid #c3c3c3;">
+<canvas id="myCanvas" width="1920" height="1080" style="border:1px solid #c3c3c3;">
 您的浏览器不支持 HTML5 canvas 标签。
 </canvas>
 
 <input type="file" id="file1" accept="*" />
-</div>
-<div>
-    显示进度：
-    <progress id="pro" value="0"></progress>
-</div>
-
 
 <script type="text/javascript">
-		var width=1280;
-		var height=720;
+		var width=1920;
+		var height=1080;
+		var size=25;
         var file1 = document.getElementById('file1');
         file1.onchange = function () {
 			var time=new Date();
             var file = file1.files[0];
+			var c=document.getElementById("myCanvas");
+			var ctx=c.getContext("2d");
             //读取为二进制
             var reader = new FileReader();
             reader.readAsArrayBuffer(file);
-            //显示进度
-            var pro = document.getElementById('pro');
-            pro.max = file.size;
-            pro.value = 0;
-            reader.onprogress = function (e) {
-                pro.value = e.loaded;
-            }
             reader.onload = function () {
 				console.log(new Date()-time)
 				let array = new Uint8Array(reader.result);
-				//console.log(array.length)
-				//for(let i=0;i<array.length;i++){
-				//	if(array[i]!=0){
-				//		console.log(i,array[i])
-				//	}
-				//}
-				var c=document.getElementById("myCanvas");
-				var ctx=c.getContext("2d");
-				for(let i=0;i<width;i++){
-					for(let j=0;j<height;j++){
-						let color=changeColor(array[i+j*width],25)
-						ctx.fillStyle='rgb('+color+','+color+','+color+')';
-						ctx.fillRect(i,j,1,1);
-	//					if (array[i+j*1020] != 0) {
-	//						console.log(i,j,i+j*1020,array[i+j*1020])
-	//					}
-	//					if(i==23&&j==19){
-	//						console.log(i,j,i+j*1020,array[i+j*1020])
-	//					}
-					}
+				var imgData=ctx.createImageData(width,height);
+				for (var i=0;i<imgData.data.length;i+=4)
+				{
+					let color=array[i/4]*size
+					imgData.data[i+0]=color;
+					imgData.data[i+1]=color;
+					imgData.data[i+2]=color;
+					imgData.data[i+3]=255;
 				}
+				ctx.putImageData(imgData,0,0);
+				ctx.font="30px Verdana";
+				// 创建渐变
+				var gradient=ctx.createLinearGradient(0,0,c.width,0);
+				gradient.addColorStop("0","magenta");
+				gradient.addColorStop("0.5","blue");
+				gradient.addColorStop("1.0","red");
+				// 用渐变填色
+				ctx.fillStyle=gradient;
+				ctx.fillText("w3school.com.cn",10,90);
 				console.log(new Date()-time)
             }
         }
-		
-		function changeColor(color,size){
-			return color*size
-		}
 </script>
 
 </body>
