@@ -1,7 +1,13 @@
 {
-  "width": 1920,
-  "height": 1080,
-  "color_size": 25,
-  "ffmpeg_path": "/exe/ffmpeg.exe"
-
+  "gifWidth": 1280,
+  "gifHeight": 720,
+  "gifFrame": 12,
+  "outWidth": 1280,
+  "outHeight": 720,
+  "outFrame": 12,
+  "colorSize": 25,
+  "mp3Bit":"64k",
+  "ffmpegPath": "/exe/ffmpeg.exe",
+  "videoPath": "/video/yjm.mp4",
+  "outPath": "/out"
 }

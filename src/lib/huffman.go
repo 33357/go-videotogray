@@ -1,9 +1,10 @@
-package main
+package lib
 
 import (
 	"container/heap"
-	"fmt"
 )
+
+var KeyCodeMap = make(map[int]string)
 
 type HuffmanTree interface {
 	Freq() int
@@ -57,28 +58,26 @@ func buildTree(symFreqs map[int]int) HuffmanTree {
 	return heap.Pop(&trees).(HuffmanTree)
 }
 
-func printCodes(tree HuffmanTree, prefix []byte) {
+func setMap(tree HuffmanTree, prefix []byte) {
 	switch i := tree.(type) {
 	case HuffmanLeaf:
-		fmt.Printf("%d\t%d\t%s\n", i.value, i.freq, string(prefix))
+		KeyCodeMap[i.value]=string(prefix)
 	case HuffmanNode:
 		prefix = append(prefix, '0')
-		printCodes(i.left, prefix)
+		setMap(i.left, prefix)
 		prefix = prefix[:len(prefix)-1]
 		prefix = append(prefix, '1')
-		printCodes(i.right, prefix)
+		setMap(i.right, prefix)
 		prefix = prefix[:len(prefix)-1]
 	}
 }
 
-func main() {
-	var array =[6] int {1,2,3,4,5,6}
+func GetHuffmanMap(array [] int) map[int]string {
 	symFreqs := make(map[int]int)
 	for _, c := range array {
 		symFreqs[c]++
 	}
-
 	exampleTree := buildTree(symFreqs)
-
-	printCodes(exampleTree, []byte{})
+	setMap(exampleTree, []byte{})
+	return KeyCodeMap
 }

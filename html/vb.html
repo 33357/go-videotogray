@@ -2,7 +2,7 @@
 <html>
 <head> 
 <meta charset="utf-8"> 
-<title>菜鸟教程(runoob.com)</title> 
+<title>vb</title> 
 </head>
 <body>
 
@@ -13,41 +13,42 @@
 <input type="file" id="file1" accept="*" />
 
 <script type="text/javascript">
-		var width=1920;
-		var height=1080;
-		var size=25;
-        var file1 = document.getElementById('file1');
+		let width=1920;
+		let height=1080;
+		let size=25;
+        let file1 = document.getElementById('file1');
         file1.onchange = function () {
-			var time=new Date();
-            var file = file1.files[0];
-			var c=document.getElementById("myCanvas");
-			var ctx=c.getContext("2d");
+			let time=new Date();
+            let file = file1.files[0];
+			let c=document.getElementById("myCanvas");
+			let ctx=c.getContext("2d");
             //读取为二进制
-            var reader = new FileReader();
-            reader.readAsArrayBuffer(file);
-            reader.onload = function () {
-				console.log(new Date()-time)
-				let array = new Uint8Array(reader.result);
-				var imgData=ctx.createImageData(width,height);
-				for (var i=0;i<imgData.data.length;i+=4)
-				{
-					let color=array[i/4]*size
-					imgData.data[i+0]=color;
-					imgData.data[i+1]=color;
-					imgData.data[i+2]=color;
-					imgData.data[i+3]=255;
-				}
-				ctx.putImageData(imgData,0,0);
-				ctx.font="30px Verdana";
-				// 创建渐变
-				var gradient=ctx.createLinearGradient(0,0,c.width,0);
-				gradient.addColorStop("0","magenta");
-				gradient.addColorStop("0.5","blue");
-				gradient.addColorStop("1.0","red");
-				// 用渐变填色
-				ctx.fillStyle=gradient;
-				ctx.fillText("w3school.com.cn",10,90);
-				console.log(new Date()-time)
+            let reader1 = new FileReader();
+            reader1.readAsText(file);
+            reader1.onload = function () {
+                let data=reader1.result.split("//")
+                let config=data[0]
+                let configArray=config.split(",")
+                config={}
+                for (let i in configArray){
+                    arr=configArray[i].split(":")
+                    config[arr[0]]=arr[1]
+                }
+                reader2.readAsArrayBuffer(file);
+                reader2.onload = function () {
+                    console.log(new Date()-time)
+                    let array = new Uint8Array(reader.result);
+                    let imgData=ctx.createImageData(width,height);
+                    for (let i=0;i<imgData.data.length;i+=4)
+                    {
+                        let color=array[i/4]*255/size
+                        imgData.data[i+0]=color;
+                        imgData.data[i+1]=color;
+                        imgData.data[i+2]=color;
+                        imgData.data[i+3]=255;
+                    }
+                    ctx.putImageData(imgData,0,0);
+                }
             }
         }
 </script>
