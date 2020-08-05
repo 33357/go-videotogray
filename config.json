@@ -5,7 +5,7 @@
   "outWidth": 1280,
   "outHeight": 720,
   "outFrame": 12,
-  "colorSize": 25,
+  "colorSize": 16,
   "mp3Bit":"64k",
   "ffmpegPath": "/exe/ffmpeg.exe",
   "videoPath": "/video/yjm.mp4",

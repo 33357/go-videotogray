@@ -94,7 +94,7 @@ func splitAnimatedGIF(sourcePath string,gifPath string,config *lib.ConfigInfo) (
 
 			array := hdImage(overpaintImage)
 
-			buf:=ArraytoBuffer(array,config)
+			buf:=ArraytoBuffer1(array,config)
 			path:=fmt.Sprintf("%s/%d.vb",vbPath,i)
 			file, err := os.Create(path)
 			if err != nil {
@@ -106,7 +106,7 @@ func splitAnimatedGIF(sourcePath string,gifPath string,config *lib.ConfigInfo) (
 			}
 			file.Close()
 				
-			break
+			//break
 
 			file, err = os.Create(fmt.Sprintf("%s/%d.png",vbPath,i))
 			if err != nil {
@@ -144,7 +144,7 @@ func hdImage(m image.Image) [] int {
 	return array
 }
 
-func ArraytoBuffer(array [] int,config *lib.ConfigInfo) *bytes.Buffer{
+func ArraytoBuffer2(array [] int,config *lib.ConfigInfo) *bytes.Buffer{
 	code,KeyCodeMap:=huffman(array)
 	var buf bytes.Buffer
 	buf.WriteString(fmt.Sprintf("width:%d,height:%d,",config.OutWidth,config.OutHeight))
@@ -166,6 +166,17 @@ func ArraytoBuffer(array [] int,config *lib.ConfigInfo) *bytes.Buffer{
 		}
 	}
 	return &buf
+}
+
+func ArraytoBuffer1(arr [] int,config *lib.ConfigInfo) *bytes.Buffer{
+	buf := new(bytes.Buffer)
+	for _,value := range arr{
+		err := binary.Write(buf, binary.LittleEndian, uint8(value))
+		if err != nil {
+			fmt.Println("binary.Read failed:", err)
+		}
+	}
+	return buf
 }
 
 func changeColorSize(gray int, size int) int {
@@ -196,8 +207,4 @@ func huffman(array [] int) (string,map[int]string){
 		buf.WriteString(KeyCodeMap[value])
 	}
 	return buf.String(),KeyCodeMap
-}
-
-func RLE(str string)  {
-	for 
 }
