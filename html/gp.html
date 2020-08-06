@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head> 
+<meta charset="utf-8"> 
+<title>gp</title> 
+</head>
+<body>
+
+<canvas id="myCanvas" width="1920" height="1080" style="border:1px solid #c3c3c3;">
+您的浏览器不支持 HTML5 canvas 标签。
+</canvas>
+
+<input type="file" id="file1" accept="*" />
+
+<script type="text/javascript">
+		let width=1280;
+		let height=720;
+		let size=25;
+        let file1 = document.getElementById('file1');
+        file1.onchange = function () {
+			let time=new Date();
+            let file = file1.files[0];
+			let c=document.getElementById("myCanvas");
+			let ctx=c.getContext("2d");
+            //读取为二进制
+            let reader = new FileReader();
+            reader.readAsArrayBuffer(file);
+            reader.onload = function () {
+                console.log(new Date()-time)
+                let array = new Uint8Array(reader.result);
+                let imgData=ctx.createImageData(width,height);
+                for (let i=0;i<imgData.data.length;i+=4)
+                {
+                    let color=array[i/4]*255/size
+                    imgData.data[i+0]=color;
+                    imgData.data[i+1]=color;
+                    imgData.data[i+2]=color;
+                    imgData.data[i+3]=255;
+                }
+                ctx.putImageData(imgData,0,0);
+            }
+        }
+</script>
+
+</body>
+</html>

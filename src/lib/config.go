@@ -16,6 +16,8 @@ type ConfigInfo struct {
 	OutHeight	int
 	OutFrame	int
 	ColorSize	int
+	GvSeconds 	int
+	ZipSeconds 	int
 	Mp3Bit		string
 	FFMPEGPath	string
 	VideoPath	string
