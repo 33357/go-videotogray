@@ -18,6 +18,8 @@ type ConfigInfo struct {
 	ColorSize	int
 	GvSeconds 	int
 	ZipSeconds 	int
+	BPageNum	int
+	BPointNum	int
 	Mp3Bit		string
 	FFMPEGPath	string
 	VideoPath	string

@@ -8,6 +8,8 @@
   "colorSize": 25,
   "gvSeconds": 5,
   "zipSeconds": 20,
+  "bPageNum": 2,
+  "bPointNum": 2,
   "mp3Bit":"64k",
   "ffmpegPath": "/exe/ffmpeg.exe",
   "videoPath": "/video/yjm.mp4",

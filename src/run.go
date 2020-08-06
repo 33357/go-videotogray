@@ -12,18 +12,18 @@ func main() {
 		fmt.Printf(err.Error())
 	}
 	sourcePath,gifPath:=run.VideoToGif(config)
-	err=run.GifToGp(sourcePath,gifPath,config)
+	_,err=run.GifToGp(sourcePath,gifPath,config)
 	if err != nil {
 		fmt.Printf(err.Error())
 	}
-	err=run.GpToGv(config)
-	if err != nil {
-		fmt.Printf(err.Error())
-	}
-	err=run.GvToZip(sourcePath)
-	if err != nil {
-		fmt.Printf(err.Error())
-	}
+	//gvPath,err:=run.GpToGv(gpPath,config)
+	//if err != nil {
+	//	fmt.Printf(err.Error())
+	//}
+	//err=run.GvToZip(gvPath,config)
+	//if err != nil {
+	//	fmt.Printf(err.Error())
+	//}
 }
 
 

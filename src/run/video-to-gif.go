@@ -29,5 +29,6 @@ func VideoToGif(config *lib.ConfigInfo) (sourcePath,gifPath string){
 		lib.VideoToMP3(path.Join(dir,config.FFMPEGPath),path.Join(dir,config.VideoPath),config.Mp3Bit,mp3Path)
 	}
 	fmt.Println("testMp3 Success")
+	fmt.Println("VideoToGif Success")
 	return sourcePath,gifPath
 }

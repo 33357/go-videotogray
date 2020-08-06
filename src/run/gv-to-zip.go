@@ -7,16 +7,16 @@ import (
 	"strings"
 )
 
-func GvToZip(vbPath string) error{
+func GvToZip(gvPath string,config *lib.ConfigInfo) error{
 	var files [] *os.File
 	for i:=0;i<12*5;i++{
-		path:=fmt.Sprintf("%s/%d.vb",vbPath,i)
+		path:=fmt.Sprintf("%s/%d.gv",gvPath,i)
 		file, err := os.Open(path)
 		if err == nil {
 			files=append(files, file)
 		}
 	}
-	zipPath:=strings.Replace(vbPath,"vb","zip",1)
+	zipPath:=strings.Replace(gvPath,"gv","zip",1)
 	_, err := os.Stat(zipPath)
 	if err != nil {
 		err:=os.MkdirAll(zipPath,os.ModePerm)
