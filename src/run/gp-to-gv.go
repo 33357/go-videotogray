@@ -18,12 +18,12 @@ func GpToGv(gpPath string,config *lib.ConfigInfo) (string,error){
 		}
 		arr= append(arr, data)
 		if len(arr)>config.GvSeconds*config.OutFrame {
-			lib.Transcode(arr,config,dvPath)
+			lib.TranscodeGV(arr,config,dvPath)
 			arr = [] [] uint8{}
 		}
 	}
 	if len(arr)!=0 {
-		lib.Transcode(arr,config,dvPath)
+		lib.TranscodeGV(arr,config,dvPath)
 	}
 	return dvPath,nil
 }

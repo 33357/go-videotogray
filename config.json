@@ -1,8 +1,8 @@
 {
-  "gifWidth": 1280,
+  "gifWidth": 1260,
   "gifHeight": 720,
   "gifFrame": 12,
-  "outWidth": 1280,
+  "outWidth": 1260,
   "outHeight": 720,
   "outFrame": 12,
   "colorSize": 25,

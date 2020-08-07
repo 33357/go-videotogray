@@ -21,12 +21,12 @@ func GifToGp(sourcePath string,gifPath string,config *lib.ConfigInfo) (string,er
 	}
 	b := bytes.NewBuffer(f)
 
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Println(r)
-			err = fmt.Errorf("Error while decoding: %s", r)
-		}
-	}()
+	//defer func() {
+	//	if r := recover(); r != nil {
+	//		fmt.Println(r)
+	//		err = fmt.Errorf("Error while decoding: %s", r)
+	//	}
+	//}()
 
 	gpPath:=strings.Replace(sourcePath,"source",fmt.Sprintf("%d_%d/gp",config.GifWidth,config.GifHeight),1)
 	_, err = os.Stat(gpPath)
@@ -52,10 +52,10 @@ func GifToGp(sourcePath string,gifPath string,config *lib.ConfigInfo) (string,er
 		//	overpaintImage=_image
 		//}
 
-		array := hdImage(overpaintImage,config.ColorSize)
-		array=lib.TranscodeGP(array,config)
+		grayArrays := hdImage(overpaintImage,config)
+		_array:=lib.TranscodeGP(grayArrays,config)
 
-		buf:=ArraytoBuffer(array)
+		buf:=ArraytoBuffer(_array)
 
 		path:=fmt.Sprintf("%s/%d.gp",gpPath,i)
 		file, err := os.Create(path)
@@ -80,35 +80,36 @@ func GifToGp(sourcePath string,gifPath string,config *lib.ConfigInfo) (string,er
 		file.Close()
 
 		fmt.Println("save:"+path)
+		return "",nil
 	}
 	fmt.Println("GifToGp Success")
 	return gpPath,nil
 }
 
 //图片灰化处理
-func hdImage(m image.Image,colorSize int) [] int {
-	bounds := m.Bounds()
-	dx := bounds.Dx()
-	dy := bounds.Dy()
-	array := make([] int, dx*dy)
-	for i := 0; i < dx; i++ {
-		for j := 0; j < dy; j++ {
+func hdImage(m image.Image,config *lib.ConfigInfo) [] [] uint8 {
+	grayArrays := make([][]uint8, config.OutWidth)
+	for i := range grayArrays {
+		grayArrays[i] = make([]uint8,config.OutHeight)
+	}
+	for i := 0; i < config.OutWidth; i++ {
+		for j := 0; j < config.OutHeight; j++ {
 			colorRgb := m.At(i, j)
 			_r, _g, _b, _ := colorRgb.RGBA()
 			r := _r >> 8
 			g := _g >> 8
 			b := _b >> 8
 			hd:=int(r * 299/1000 +g * 587/1000+ b * 114/1000)
-			array[i+j*dx]=changeColorSize(hd, colorSize)
+			grayArrays[i][j]=changeColorSize(hd, config.ColorSize)
 		}
 	}
-	return array
+	return grayArrays
 }
 
-func ArraytoBuffer(arr [] int) *bytes.Buffer{
+func ArraytoBuffer(arr [] uint8) *bytes.Buffer{
 	buf := new(bytes.Buffer)
 	for _,value := range arr{
-		err := binary.Write(buf, binary.LittleEndian, uint8(value))
+		err := binary.Write(buf, binary.LittleEndian,value)
 		if err != nil {
 			fmt.Println("binary.Read failed:", err)
 		}
@@ -116,18 +117,18 @@ func ArraytoBuffer(arr [] int) *bytes.Buffer{
 	return buf
 }
 
-func changeColorSize(gray int, size int) int {
+func changeColorSize(gray int, size int) uint8 {
 	if gray<255 {
 		i := 0
 		g := gray*size/255
 		for ;i<size;i++{
 			if g>=i && g<i+1 {
-				return i
+				return uint8(i)
 			}
 		}
 		return 0
 	}else{
-		return size-1
+		return uint8(size-1)
 	}
 }
 

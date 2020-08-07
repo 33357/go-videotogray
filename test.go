@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	c:=16
-	arr:=[c] int {}
-	fmt.Println(arr)
+	grayArrays :=make([][] uint8,8)
+	grayArrays[0][0]=1
+	fmt.Println(grayArrays[0][0])
 }

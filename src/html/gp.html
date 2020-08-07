@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head> 
-<meta charset="utf-8"> 
-<title>gp</title> 
+    <meta charset="utf-8"> 
+    <script type="text/javascript" src="/js/decodeGp.js"></script>
+    <title>gp</title> 
 </head>
 <body>
 
@@ -40,10 +41,11 @@ gp图片文件：<input type="file" id="file2" accept=".gp" />
                 reader.onload = function () {
                     console.log(new Date()-time)
                     let array = new Uint8Array(reader.result);
+                    let grayArray=decodeGP(array,config)
                     let imgData=ctx.createImageData(config['outWidth'],config['outHeight']);
                     for (let i=0;i<imgData.data.length;i+=4)
                     {
-                        let color=array[i/4]*255/config['colorSize']
+                        let color=grayArray[i/4]*255/config['colorSize']
                         imgData.data[i+0]=color;
                         imgData.data[i+1]=color;
                         imgData.data[i+2]=color;

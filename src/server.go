@@ -2,21 +2,17 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
-	"os"
-	"path"
 )
 
 func main() {
-	http.HandleFunc("/", index) // index 为向 url发送请求时，调用的函数
-	log.Fatal(http.ListenAndServe("localhost:8000", nil))
-}
-func index(w http.ResponseWriter, r *http.Request) {
-	dir, _ := os.Getwd()
-	filePath:=path.Join(dir,"./src/html/gp.html")
-	fmt.Println(filePath)
-	content, _ := ioutil.ReadFile(filePath)
-	w.Write(content)
+	//dir, _ := os.Getwd()
+	//filePath:=path.Join(dir,"./src/html/")
+	fmt.Println("http://localhost:9000/gp.html")
+	http.Handle("/", http.FileServer(http.Dir("./src/html")))
+	err := http.ListenAndServe("localhost:9000", nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("http://localhost:9000/gp.html")
 }
