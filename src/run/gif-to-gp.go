@@ -80,7 +80,7 @@ func GifToGp(sourcePath string,gifPath string,config *lib.ConfigInfo) (string,er
 		file.Close()
 
 		fmt.Println("save:"+path)
-		return "",nil
+		//return "",nil
 	}
 	fmt.Println("GifToGp Success")
 	return gpPath,nil

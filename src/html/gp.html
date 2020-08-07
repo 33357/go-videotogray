@@ -31,7 +31,6 @@ gp图片文件：<input type="file" id="file2" accept=".gp" />
             if(config==null){
                 window.alert('请先上传配置文件！')
             }else{
-                let time=new Date();
                 let file = file2.files[0];
                 let c=document.getElementById("myCanvas");
                 let ctx=c.getContext("2d");
@@ -39,9 +38,10 @@ gp图片文件：<input type="file" id="file2" accept=".gp" />
                 let reader = new FileReader();
                 reader.readAsArrayBuffer(file);
                 reader.onload = function () {
-                    console.log(new Date()-time)
+                    let time=new Date();
                     let array = new Uint8Array(reader.result);
                     let grayArray=decodeGP(array,config)
+                    console.log(new Date()-time)
                     let imgData=ctx.createImageData(config['outWidth'],config['outHeight']);
                     for (let i=0;i<imgData.data.length;i+=4)
                     {
@@ -52,6 +52,7 @@ gp图片文件：<input type="file" id="file2" accept=".gp" />
                         imgData.data[i+3]=255;
                     }
                     ctx.putImageData(imgData,0,0);
+                    console.log(new Date()-time)
                 }
             }
         }
