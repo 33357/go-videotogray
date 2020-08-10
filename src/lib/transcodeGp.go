@@ -6,90 +6,67 @@ func TranscodeGP(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
 	if config.BPointNum >5 {
 		fmt.Printf("BPointNum over 5 :%d\n",config.BPointNum)
 	}
-	var gpArray [] uint8
-	basisArrays:=getBasisArrays(grayArrays,config)
-	for  _,arr := range basisArrays  {
-		gpArray=append(gpArray,arr...)
-	}
-	lineDifferenceArray:=getLineDifferenceArray(basisArrays,config,grayArrays)
-	gpArray=append(gpArray,lineDifferenceArray...)
-	//blockDifferenceArray:=getBlockDifferenceArray(basisArrays,config,array)
-	//gpArray=append(gpArray,blockDifferenceArray...)
-	return gpArray
+	return getOutArray(grayArrays,config)
 }
 
-func getBasisArrays(grayArrays [][] uint8,config *ConfigInfo) [] [] uint8 {
-	basisArraysWidth:=config.OutWidth/(config.BPointNum+1)
-	basisArraysHeight:=config.OutHeight/(config.BPointNum+1)
-	basisArrays := make([][]uint8, basisArraysWidth)
-	for i:=0;i<basisArraysWidth;i++ {
-		basisArrays[i] = make([]uint8, basisArraysHeight)
+func getOutArray(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
+	var outArray [] uint8
+	var basisArray [] uint8
+	var differenceArray [] uint8
+	skip:=config.BPointNum+1
+	reGrayArrays := make([][]uint8, config.OutHeight)
+	for i:=0;i<config.OutHeight;i++ {
+		reGrayArrays[i] = make([]uint8, config.OutWidth)
 	}
-	for i:=0;i<basisArraysWidth;i++ {
-		for j:=0;j<basisArraysHeight;j++{
-			basisArrays[i][j]=grayArrays[i*(config.BPointNum+1)][j*(config.BPointNum+1)]
-		}
-	}
-	return basisArrays
-}
-
-func getLineDifferenceArray(basisArrays[] [] uint8,config *ConfigInfo,array [] [] uint8) [] uint8 {
-	var lineDifferenceArray [] uint8
-	lineArraysWidth:=config.OutWidth
-	lineArraysHeight:=config.OutHeight/(config.BPointNum+1)
-	lineArrays := make([][]uint8, lineArraysWidth)
-	for i:=0;i<lineArraysWidth;i++ {
-		lineArrays[i] = make([]uint8,lineArraysHeight)
-	}
-	for  index,arr := range basisArrays  {
-		length:=len(arr)-1
-		for  i:=0;i<length;i++  {
-			d:=int8(arr[i+1])-int8(arr[i])
-			if d<0{
-				d=-d
-			}
-			lineArrays[index*(config.BPointNum+1)][i]=array[index*(config.BPointNum+1)][i*(config.BPointNum+1)]
-			if d>int8(config.BPointNum+1) {
-				for j:=1;j<config.BPointNum+1;j++{
-					lineDifferenceArray=append(lineDifferenceArray,array[index][i*(config.BPointNum+1)+j])
-					lineArrays[index*(config.BPointNum+1)][i+j]=array[index*(config.BPointNum+1)][i*(config.BPointNum+1)+j]
+	for i:=0;i<config.OutHeight;i+=skip {
+		for j:=0;j<config.OutWidth;j+=skip{
+			reGrayArrays[i][j]=grayArrays[i][j]
+			basisArray=append(basisArray,grayArrays[i][j])
+			if j!=0 {
+				d:=int8(grayArrays[i][j-skip])- int8(grayArrays[i][j])
+				if d<0{
+					d=-d
 				}
-			}else{
-				for j:=1;j<config.BPointNum+1;j++{
-					if arr[i+1]>arr[i] {
-						if int8(j)<d{
-							lineArrays[index*(config.BPointNum+1)+j][i]=array[index][i*(config.BPointNum+1)]+uint8(j)
+				if d>int8(skip){
+					for k:=1;k<skip;k++{
+						reGrayArrays[i][j+k]=grayArrays[i][j+k]
+					}
+					differenceArray=append(differenceArray,grayArrays[i][j])
+				}else{
+					for k:=1;k<skip;k++{
+						if reGrayArrays[i][j-skip]>reGrayArrays[i][j] {
+							if int8(k)<d{
+								reGrayArrays[i][j+k]=reGrayArrays[i][j]+uint8(k)
+							}else{
+								reGrayArrays[i][j+k]=reGrayArrays[i][j]+uint8(d)
+							}
 						}else{
-							lineArrays[index*(config.BPointNum+1)+j][i]=array[index][i*(config.BPointNum+1)]+uint8(d)
-						}
-					}else{
-						if int8(j)<d{
-							lineArrays[index*(config.BPointNum+1)+j][i]=array[index][i*(config.BPointNum+1)]-uint8(j)
-						}else{
-							lineArrays[index*(config.BPointNum+1)+j][i]=array[index][i*(config.BPointNum+1)]-uint8(d)
+							if int8(k)<d{
+								reGrayArrays[i][j+k]=reGrayArrays[i][j]-uint8(k)
+							}else{
+								reGrayArrays[i][j+k]=reGrayArrays[i][j]-uint8(d)
+							}
 						}
 					}
 				}
 			}
+			//if i!=0 {
+			//	for k:=0;k<skip;k++{
+			//		d:=int8(reGrayArrays[i-skip][j+k])- int8(reGrayArrays[i][j+k])
+			//		if d<0{
+			//			d=-d
+			//		}
+			//		if d>int8(skip){
+			//			for l:=1;l<skip;l++ {
+			//				differenceArray = append(differenceArray, grayArrays[i-skip+l][j+k])
+			//			}
+			//		}
+			//	}
+			//}
 		}
 	}
-	fmt.Println(len(lineArrays))
-	for  index,arr := range lineArrays  {
-		var length=len(arr)
-		for  i:=0;i<length-1;i++  {
-			d:=int8(arr[i+1])-int8(arr[i])
-			if d<0{
-				d=-d
-			}
-			if d>int8(config.BPointNum+1) {
-				for j:=1;j<config.BPointNum+1;j++{
-					lineDifferenceArray=append(lineDifferenceArray,array[index][i*(config.BPointNum+1)+j])
-				}
-			}
-		}
-	}
-	fmt.Println(len(lineDifferenceArray))
-	return lineDifferenceArray
+	outArray=append(basisArray,differenceArray...)
+	return outArray
 }
 
 //func getBlockDifferenceArray(basisArrays[] [] uint8,config *ConfigInfo,array [] uint8) [] uint8 {

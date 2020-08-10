@@ -9,7 +9,7 @@
   "gvSeconds": 5,
   "zipSeconds": 20,
   "bPageNum": 2,
-  "bPointNum": 2,
+  "bPointNum": 1,
   "mp3Bit":"64k",
   "ffmpegPath": "/exe/ffmpeg.exe",
   "videoPath": "/video/yjm.mp4",

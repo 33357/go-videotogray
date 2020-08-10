@@ -88,13 +88,13 @@ func GifToGp(sourcePath string,gifPath string,config *lib.ConfigInfo) (string,er
 
 //图片灰化处理
 func hdImage(m image.Image,config *lib.ConfigInfo) [] [] uint8 {
-	grayArrays := make([][]uint8, config.OutWidth)
+	grayArrays := make([][]uint8, config.OutHeight)
 	for i := range grayArrays {
-		grayArrays[i] = make([]uint8,config.OutHeight)
+		grayArrays[i] = make([]uint8,config.OutWidth)
 	}
-	for i := 0; i < config.OutWidth; i++ {
-		for j := 0; j < config.OutHeight; j++ {
-			colorRgb := m.At(i, j)
+	for i := 0; i < config.OutHeight; i++ {
+		for j := 0; j < config.OutWidth; j++ {
+			colorRgb := m.At(j, i)
 			_r, _g, _b, _ := colorRgb.RGBA()
 			r := _r >> 8
 			g := _g >> 8

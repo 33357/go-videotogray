@@ -40,19 +40,22 @@ gp图片文件：<input type="file" id="file2" accept=".gp" />
                 reader.onload = function () {
                     let time=new Date();
                     let array = new Uint8Array(reader.result);
-                    let grayArray=decodeGP(array,config)
-                    console.log(new Date()-time)
+                    let grayArrays=decodeGP(array,config)
+                    console.log('load:',new Date()-time)
                     let imgData=ctx.createImageData(config['outWidth'],config['outHeight']);
-                    for (let i=0;i<imgData.data.length;i+=4)
+                    for (let i=0;i<config['outHeight'];i++)
                     {
-                        let color=grayArray[i/4]*255/config['colorSize']
-                        imgData.data[i+0]=color;
-                        imgData.data[i+1]=color;
-                        imgData.data[i+2]=color;
-                        imgData.data[i+3]=255;
+                        for (let j=0;j<config['outWidth'];j++)
+                        {
+                            let color=grayArrays[i][j]*255/config['colorSize']
+                            imgData.data[j*4+0+i*config['outWidth']*4]=color;
+                            imgData.data[j*4+1+i*config['outWidth']*4]=color;
+                            imgData.data[j*4+2+i*config['outWidth']*4]=color;
+                            imgData.data[j*4+3+i*config['outWidth']*4]=255;
+                        }
                     }
                     ctx.putImageData(imgData,0,0);
-                    console.log(new Date()-time)
+                    console.log('draw:',new Date()-time)
                 }
             }
         }
