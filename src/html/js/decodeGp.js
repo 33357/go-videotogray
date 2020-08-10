@@ -22,61 +22,63 @@ function getGrayArray(basisArrays,differenceArray,config) {
         grayArrays.push(new Array(config['outWidth']))
     }
     let skip=config['bPointNum']+1
-    for (let i=0;i<config['outHeight'];i+=skip) {
-        for (let j=0;j<config['outWidth'];j+=skip){
-            grayArrays[i][j]=basisArrays[i/skip][j/skip]
-            if (j!=0) {
-                let d=grayArrays[i][j-skip]- grayArrays[i][j]
+    for (let h=0;h<config['outHeight'];h+=skip) {
+        for (let w=0;w<config['outWidth'];w+=skip){
+            grayArrays[h][w]=basisArrays[h/skip][w/skip]
+            if (w!=0) {
+                let d=grayArrays[h][w-skip]- grayArrays[h][w]
                 if (d<0){
                     d=-d
                 }
-                for (let k=1;k<skip;k++){
-                    if (d>skip){
-                        grayArrays[i][j+k]=differenceArray[d_index++]
+                for (let ws=1;ws<skip;ws++){
+                    if (d==0){
+                        grayArrays[h][w -skip+ws] = grayArrays[h][w]
+                    }else if (d>skip){
+                        grayArrays[h][w -skip+ws]=differenceArray[d_index++]
                     }else {
-                        if (grayArrays[i][j - skip] > grayArrays[i][j]) {
-                            if (j < d) {
-                                grayArrays[i][j + k] = grayArrays[i][j] + k
+                        if (grayArrays[h][w - skip] > grayArrays[h][w]) {
+                            if (ws < d) {
+                                grayArrays[h][w -skip + ws] = grayArrays[h][w -skip] - ws
                             } else {
-                                grayArrays[i][j + k] = grayArrays[i][j] + d
+                                grayArrays[h][w -skip + ws] = grayArrays[h][w -skip] - d
                             }
                         } else {
-                            if (j < d) {
-                                grayArrays[i][j + k] = grayArrays[i][j] - k
+                            if (ws < d) {
+                                grayArrays[h][w -skip + ws] = grayArrays[h][w -skip] + ws
                             } else {
-                                grayArrays[i][j + k] = grayArrays[i][j] - d
+                                grayArrays[h][w -skip + ws] = grayArrays[h][w -skip] + d
                             }
                         }
                     }
                 }
             }
-            if (i!=0) {
-                for (let k=0;k<skip;k++)
+            if (h!=0&&w!=0) {
+                for (let ws=0;ws<skip;ws++)
                 {
-                    let d = grayArrays[i-skip][j+k] - grayArrays[i][j+k]
+                    let d = grayArrays[h-skip][w-skip+ws] - grayArrays[h][w-skip+ws]
                     if (d < 0) {
                         d = -d
                     }
-                    for (let l = 1; l < skip; l++) {
-                        // if (d > skip) {
-                        //     //grayArrays[i-skip+l][j+k] = differenceArray[d_index++]
-                        //     d_index++
-                        //
-                        // } else {
-                            if (grayArrays[i-skip][j+k] > grayArrays[i][j+k]) {
-                                if (l < d) {
-                                    grayArrays[i-skip+l][j+k] = grayArrays[i-skip][j+k] - l
-                                } else {
-                                    grayArrays[i-skip+l][j+k] = grayArrays[i-skip][j+k] - d
+                    for (let hs = 1; hs < skip; hs++) {
+                        if (d == 0) {
+                            grayArrays[h - skip + hs][w-skip + ws] = grayArrays[h - skip][w-skip + ws]
+                        } else if (d > skip) {
+                            grayArrays[h - skip + hs][w-skip + ws] = differenceArray[d_index++]
+                        } else {
+                            if (grayArrays[h - skip][w-skip + ws] > grayArrays[h][w-skip+ ws]) {
+                                if (hs < d) {
+                                    grayArrays[h - skip + hs][w-skip + ws] = grayArrays[h - skip][w-skip + ws] - hs
+                                } else{
+                                    grayArrays[h - skip + hs][w-skip + ws] = grayArrays[h - skip][w-skip + ws] - d
                                 }
                             } else {
-                                if (l < d) {
-                                    grayArrays[i-skip+l][j+k] = grayArrays[i-skip][j+k] + l
-                                } else {
-                                    grayArrays[i-skip+l][j+k] = grayArrays[i-skip][j+k] + d
+                                if (hs < d) {
+                                    grayArrays[h - skip + hs][w-skip + ws] = grayArrays[h - skip][w-skip + ws] + hs
+                                } else{
+                                    grayArrays[h - skip + hs][w-skip + ws] = grayArrays[h - skip][w-skip + ws] + d
                                 }
                             }
-                        // }
+                        }
                     }
                 }
             }

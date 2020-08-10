@@ -18,51 +18,51 @@ func getOutArray(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
 	for i:=0;i<config.OutHeight;i++ {
 		reGrayArrays[i] = make([]uint8, config.OutWidth)
 	}
-	for i:=0;i<config.OutHeight;i+=skip {
-		for j:=0;j<config.OutWidth;j+=skip{
-			reGrayArrays[i][j]=grayArrays[i][j]
-			basisArray=append(basisArray,grayArrays[i][j])
-			if j!=0 {
-				d:=int8(grayArrays[i][j-skip])- int8(grayArrays[i][j])
+	for h:=0;h<config.OutHeight;h+=skip {
+		for w:=0;w<config.OutWidth;w+=skip{
+			reGrayArrays[h][w]=grayArrays[h][w]
+			basisArray=append(basisArray,grayArrays[h][w])
+			if w!=0 {
+				d:=int8(grayArrays[h][w-skip])- int8(grayArrays[h][w])
 				if d<0{
 					d=-d
 				}
-				if d>int8(skip){
-					for k:=1;k<skip;k++{
-						reGrayArrays[i][j+k]=grayArrays[i][j+k]
-					}
-					differenceArray=append(differenceArray,grayArrays[i][j])
-				}else{
-					for k:=1;k<skip;k++{
-						if reGrayArrays[i][j-skip]>reGrayArrays[i][j] {
-							if int8(k)<d{
-								reGrayArrays[i][j+k]=reGrayArrays[i][j]+uint8(k)
+				for ws:=1;ws<skip;ws++{
+					if d==0{
+						reGrayArrays[h][w -skip+ws]=grayArrays[h][w-skip]
+					}else if d>int8(skip){
+						reGrayArrays[h][w -skip+ws]=grayArrays[h][w-skip+ws]
+						differenceArray=append(differenceArray,grayArrays[h][w-skip+ws])
+					}else{
+						if reGrayArrays[h][w-skip]>reGrayArrays[h][w] {
+							if int8(ws)<d{
+								reGrayArrays[h][w -skip+ws]=reGrayArrays[h][w-skip]-uint8(ws)
 							}else{
-								reGrayArrays[i][j+k]=reGrayArrays[i][j]+uint8(d)
+								reGrayArrays[h][w -skip+ws]=reGrayArrays[h][w-skip]-uint8(d)
 							}
 						}else{
-							if int8(k)<d{
-								reGrayArrays[i][j+k]=reGrayArrays[i][j]-uint8(k)
+							if int8(ws)<d{
+								reGrayArrays[h][w -skip+ws]=reGrayArrays[h][w-skip]+uint8(ws)
 							}else{
-								reGrayArrays[i][j+k]=reGrayArrays[i][j]-uint8(d)
+								reGrayArrays[h][w -skip+ws]=reGrayArrays[h][w-skip]+uint8(d)
 							}
 						}
 					}
 				}
 			}
-			//if i!=0 {
-			//	for k:=0;k<skip;k++{
-			//		d:=int8(reGrayArrays[i-skip][j+k])- int8(reGrayArrays[i][j+k])
-			//		if d<0{
-			//			d=-d
-			//		}
-			//		if d>int8(skip){
-			//			for l:=1;l<skip;l++ {
-			//				differenceArray = append(differenceArray, grayArrays[i-skip+l][j+k])
-			//			}
-			//		}
-			//	}
-			//}
+			if h!=0&&w!=0 {
+				for ws:=0;ws<skip;ws++{
+					d:=int8(reGrayArrays[h-skip][w-skip+ws])- int8(reGrayArrays[h][w-skip+ws])
+					if d<0{
+						d=-d
+					}
+					if d>int8(skip){
+						for hs:=1;hs<skip;hs++ {
+							differenceArray = append(differenceArray, grayArrays[h-skip+hs][w-skip+ws])
+						}
+					}
+				}
+			}
 		}
 	}
 	outArray=append(basisArray,differenceArray...)
