@@ -11,16 +11,16 @@ import (
 	"os"
 )
 
-func GifToBin(gifPath string,binPath string,config *lib.ConfigInfo) error {
+func GifToBin(gifPath string,binFolderPath string,config *lib.ConfigInfo) error {
 	f, err := ioutil.ReadFile(gifPath) //读取文件
 	if err != nil {
 		err = fmt.Errorf(err.Error())
 	}
 	b := bytes.NewBuffer(f)
 
-	_, err = os.Stat(binPath)
+	_, err = os.Stat(binFolderPath)
 	if err != nil {
-		err:=os.MkdirAll(binPath,os.ModePerm)
+		err:=os.MkdirAll(binFolderPath,os.ModePerm)
 		if err!=nil{
 			return err
 		}
@@ -35,6 +35,11 @@ func GifToBin(gifPath string,binPath string,config *lib.ConfigInfo) error {
 	draw.Draw(overpaintImage, overpaintImage.Bounds(), gif.Image[0], image.Point{}, draw.Src)
 
 	for i, srcImg := range gif.Image {
+		binPath:=fmt.Sprintf("%s/%d.bin",binFolderPath,i)
+		_, err = os.Stat(binPath)
+		if err == nil {
+			continue
+		}
 		draw.Draw(overpaintImage, overpaintImage.Bounds(), srcImg, image.Point{}, draw.Over)
 		//if(config.GifHeight!=config.OutHeight||config.GifWidth!=config.OutWidth){
 		//	_image:= resize.Resize(uint(config.OutWidth), uint(config.OutHeight), overpaintImage, resize.Lanczos3)
@@ -45,7 +50,7 @@ func GifToBin(gifPath string,binPath string,config *lib.ConfigInfo) error {
 		for _, arr := range grayArrays {
 			array=append(array,arr...)
 		}
-		lib.ArraySaveAsBufferFile(array,fmt.Sprintf("%s/%d.bin",binPath,i))
+		lib.ArraySaveAsBufferFile(array,binPath)
 	}
 	fmt.Println("GifToBin Success")
 	return nil

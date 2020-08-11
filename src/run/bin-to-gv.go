@@ -7,32 +7,36 @@ import (
 	"os"
 )
 
-func BinToGv(binPath string,gvPath string,config *lib.ConfigInfo) error{
-	_, err := os.Stat(gvPath)
+func BinToGv(binFolderPath string,gvFolderPath string,config *lib.ConfigInfo) error{
+	_, err := os.Stat(gvFolderPath)
 	if err != nil {
-		err:=os.MkdirAll(gvPath,os.ModePerm)
+		err:=os.MkdirAll(gvFolderPath,os.ModePerm)
 		if err!=nil{
 			return err
 		}
 	}
 
-	var arr [] [] uint8
+	var arrs [] [] []uint8
 	for i:=0;;i++{
-		path:=fmt.Sprintf("%s/%d.bin",binPath,i)
-		data, err := ioutil.ReadFile(path)
+		path:=fmt.Sprintf("%s/%d.bin",binFolderPath,i)
+		byteArray, err := ioutil.ReadFile(path)
 		if err != nil {
 			break
 		}
-		arr= append(arr, data)
-		if len(arr)>config.GvSeconds*config.OutFrame {
-			array:=lib.TranscodeGV(arr,gvPath,config)
-			lib.ArraySaveAsBufferFile(array,fmt.Sprintf("%s/%d.gv",gvPath,i))
-			arr = [] [] uint8{}
+		var grayArrays [][]uint8
+		for j:=0;j<config.OutHeight;j++ {
+			grayArrays=append(grayArrays,byteArray[j*config.OutWidth:(j+1)*config.OutWidth])
+		}
+		arrs= append(arrs, grayArrays)
+		if len(arrs)>config.GvSeconds*config.OutFrame {
+			array:=lib.TranscodeGV(arrs,config)
+			lib.ArraySaveAsBufferFile(array,fmt.Sprintf("%s/%d.gv",gvFolderPath,i))
+			arrs = [] [] [] uint8{}
 		}
 	}
 
-	if len(arr)!=0 {
-		lib.TranscodeGV(arr,gvPath,config)
+	if len(arrs)!=0 {
+		lib.TranscodeGV(arrs,config)
 	}
 	return nil
 }

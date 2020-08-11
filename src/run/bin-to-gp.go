@@ -7,17 +7,23 @@ import (
 	"os"
 )
 
-func BinToGp(binPath string,gpPath string,config *lib.ConfigInfo) error{
-	_, err := os.Stat(gpPath)
+func BinToGp(binFolderPath string,gpFolderPath string,config *lib.ConfigInfo) error{
+	_, err := os.Stat(gpFolderPath)
 	if err != nil {
-		err:=os.MkdirAll(gpPath,os.ModePerm)
+		err:=os.MkdirAll(gpFolderPath,os.ModePerm)
 		if err!=nil{
 			return err
 		}
 	}
 	for i:=0;;i++{
-		path:=fmt.Sprintf("%s/%d.bin",binPath,i)
-		byteArray, err := ioutil.ReadFile(path)
+		gpPath:=fmt.Sprintf("%s/%d.gp",gpFolderPath,i)
+		_, err = os.Stat(gpPath)
+		if err == nil {
+			continue
+		}
+
+		binPath:=fmt.Sprintf("%s/%d.bin",binFolderPath,i)
+		byteArray, err := ioutil.ReadFile(binPath)
 		if err != nil {
 			break
 		}
@@ -27,7 +33,7 @@ func BinToGp(binPath string,gpPath string,config *lib.ConfigInfo) error{
 			grayArrays=append(grayArrays,byteArray[j*config.OutWidth:(j+1)*config.OutWidth])
 		}
 		array:=lib.TranscodeGP(grayArrays,config)
-		err=lib.ArraySaveAsBufferFile(array,fmt.Sprintf("%s/%d.gp",gpPath,i))
+		err=lib.ArraySaveAsBufferFile(array,gpPath)
 		if err != nil {
 			return err
 		}

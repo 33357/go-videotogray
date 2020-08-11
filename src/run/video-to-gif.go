@@ -7,11 +7,11 @@ import (
 	"path"
 )
 
-func VideoToGif(sourcePath string,gifPath string,mp3Path string,config *lib.ConfigInfo) error{
+func VideoToGif(sourceFolderPath string,gifPath string,mp3Path string,config *lib.ConfigInfo) error{
 	dir, _ := os.Getwd()
-	_, err := os.Stat(sourcePath)
+	_, err := os.Stat(sourceFolderPath)
 	if err != nil {
-		err:=os.MkdirAll(sourcePath,os.ModePerm)
+		err:=os.MkdirAll(sourceFolderPath,os.ModePerm)
 		if err!=nil{
 			return err
 		}

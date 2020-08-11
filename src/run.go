@@ -16,31 +16,31 @@ func main() {
 	}
 
 	dir, _ := os.Getwd()
-	sourcePath:=path.Join(dir,fmt.Sprintf("%s/%s/source",config.OutPath,getVideoName(config)))
-	gifPath:=fmt.Sprintf("%s/%s_w%d_h%d_f%d.gif",sourcePath,getVideoName(config),config.GifWidth,config.GifHeight,config.GifFrame)
-	mp3Path:=fmt.Sprintf("%s/%s_%s.mp3",sourcePath,getVideoName(config),config.Mp3Bit)
-	binPath:=strings.Replace(sourcePath,"source",fmt.Sprintf("w%d_h%d_f%d_s%d/bin",config.GifWidth,config.GifHeight,config.OutFrame,config.ColorSize),1)
-	gpPath:=strings.Replace(binPath,"bin","gp",1)
-	//gvPath:=strings.Replace(gpPath,"bin","gv",1)
-	//zipPath:=strings.Replace(gpPath,"bin","zip",1)
+	sourceFolderPath:=path.Join(dir,fmt.Sprintf("%s/%s/source",config.OutPath,getVideoName(config)))
+	gifPath:=fmt.Sprintf("%s/%s_w%d_h%d_f%d.gif",sourceFolderPath,getVideoName(config),config.GifWidth,config.GifHeight,config.GifFrame)
+	mp3Path:=fmt.Sprintf("%s/%s_%s.mp3",sourceFolderPath,getVideoName(config),config.Mp3Bit)
+	binFolderPath:=strings.Replace(sourceFolderPath,"source",fmt.Sprintf("w%d_h%d_f%d_s%d/bin",config.GifWidth,config.GifHeight,config.OutFrame,config.ColorSize),1)
+	gpFolderPath:=strings.Replace(binFolderPath,"bin","gp",1)
+	gvFolderPath:=strings.Replace(binFolderPath,"bin","gv",1)
+	//zipFolderPath:=strings.Replace(binFolderPath,"bin","zip",1)
 
-	err=run.VideoToGif(sourcePath,gifPath,mp3Path,config)
+	err=run.VideoToGif(sourceFolderPath,gifPath,mp3Path,config)
 	if err != nil {
 		fmt.Printf(err.Error())
 	}
-	err=run.GifToBin(gifPath,binPath,config)
+	err=run.GifToBin(gifPath,binFolderPath,config)
 	if err != nil {
 		fmt.Printf(err.Error())
 	}
-	err=run.BinToGp(binPath,gpPath,config)
+	err=run.BinToGp(binFolderPath,gpFolderPath,config)
 	if err != nil {
 		fmt.Printf(err.Error())
 	}
-	//err=run.BinToGv(binPath,gvPath,config)
-	//if err != nil {
-	//	fmt.Printf(err.Error())
-	//}
-	//err=run.GvToZip(gvPath,zipPath,config)
+	err=run.BinToGv(binFolderPath,gvFolderPath,config)
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
+	//err=run.GvToZip(gvFolderPath,zipFolderPath,config)
 	//if err != nil {
 	//	fmt.Printf(err.Error())
 	//}
