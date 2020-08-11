@@ -10,8 +10,9 @@
   "zipSeconds": 20,
   "bPageNum": 2,
   "bPointNum": 1,
+  "thread": 4,
   "mp3Bit":"48k",
   "ffmpegPath": "/exe/ffmpeg.exe",
-  "videoPath": "/video/yjm.mp4",
+  "videoPath": "/video/yoyo.flv",
   "outPath": "/out"
 }

@@ -20,6 +20,7 @@ type ConfigInfo struct {
 	ZipSeconds 	int
 	BPageNum	int
 	BPointNum	int
+	Thread		int
 	Mp3Bit		string
 	FFMPEGPath	string
 	VideoPath	string
