@@ -30,7 +30,7 @@ func GetConfig() (*ConfigInfo ,error){
 	dir, _ := os.Getwd()
 	filePtr, err := os.Open(path.Join(dir,"config.json"))
 	if err != nil {
-		return nil,errors.New(err.Error())
+		return nil,err
 	}
 	defer filePtr.Close()
 

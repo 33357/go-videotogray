@@ -22,30 +22,6 @@ func getOutArray(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
 		for w:=0;w<config.OutWidth;w+=skip{
 			reGrayArrays[h][w]=grayArrays[h][w]
 			basisArray=append(basisArray,grayArrays[h][w])
-			//if w==0&&h==0 {
-			//	basisArray=append(basisArray,grayArrays[h][w])
-			//}else{
-			//	if w==0{
-			//		d:=int(grayArrays[h-skip][w])-int(grayArrays[h][w])
-			//		if d<0{
-			//			d=config.ColorSize+d
-			//		}
-			//		differenceArray=append(differenceArray,uint8(d))
-			//	}else if h==0{
-			//		d:=int(grayArrays[h][w-skip])-int(grayArrays[h][w])
-			//		if d<0{
-			//			d=config.ColorSize+d
-			//		}
-			//		differenceArray=append(differenceArray,uint8(d))
-			//	}else{
-			//		size:=int(grayArrays[h][w-skip])+int(grayArrays[h-skip][w])
-			//		d:=size-int(grayArrays[h][w])
-			//		if d<0{
-			//			d=config.ColorSize+d
-			//		}
-			//		differenceArray=append(differenceArray,uint8(d))
-			//	}
-			//}
 			if w!=0 {
 				d:=int8(grayArrays[h][w-skip])- int8(grayArrays[h][w])
 				if d<0{
@@ -56,11 +32,6 @@ func getOutArray(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
 						reGrayArrays[h][w -skip+ws]=grayArrays[h][w-skip]
 					}else if d>int8(skip){
 						reGrayArrays[h][w -skip+ws]=grayArrays[h][w-skip+ws]
-						//dd:=int(grayArrays[h][w-skip])-int(grayArrays[h][w-skip+ws])
-						//if dd<0{
-						//	dd=config.ColorSize+dd
-						//}
-						//differenceArray=append(differenceArray,uint8(dd))
 						differenceArray=append(differenceArray,grayArrays[h][w-skip+ws])
 					}else{
 						if reGrayArrays[h][w-skip]>reGrayArrays[h][w] {
@@ -87,11 +58,6 @@ func getOutArray(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
 					}
 					if d>int8(skip){
 						for hs:=1;hs<skip;hs++ {
-							//dd:=int(grayArrays[h-skip][w-skip+ws])-int(grayArrays[h-skip+hs][w-skip+ws])
-							//if dd<0{
-							//	dd=config.ColorSize+dd
-							//}
-							//differenceArray=append(differenceArray,uint8(dd))
 							differenceArray = append(differenceArray, grayArrays[h-skip+hs][w-skip+ws])
 						}
 					}
@@ -102,10 +68,3 @@ func getOutArray(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
 	outArray=append(basisArray,differenceArray...)
 	return outArray
 }
-
-//func getBlockDifferenceArray(basisArrays[] [] uint8,config *ConfigInfo,array [] uint8) [] uint8 {
-//	var blockDifferenceArray [] uint8
-//
-//
-//	return blockDifferenceArray
-//}

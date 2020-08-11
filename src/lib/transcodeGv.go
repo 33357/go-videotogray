@@ -1,8 +1,9 @@
 package lib
 
 
-func TranscodeGV(array [] [] uint8,config *ConfigInfo,dvPath string)  {
+func TranscodeGV(array [] [] uint8,dvPath string,config *ConfigInfo) [] uint8 {
 	length:=len(array)
+	var arr [] uint8
 	var IPageArray [] uint8
 	var BPageArray [] [] uint8
 	var PPageArray [] [] uint8
@@ -21,49 +22,12 @@ func TranscodeGV(array [] [] uint8,config *ConfigInfo,dvPath string)  {
 		}
 	}
 	transcodeIPage(IPageArray,config)
+
+	return arr
 }
 
 func transcodeIPage(array [] uint8,config *ConfigInfo)  {
-	//let IPageStr='';
-	//let beforeChar='';
-	//for (let i=0;i<width;i++){
-	//	let thisChar=str[i];
-	//	if(i==0){
-	//		IPageStr+=difference[value[thisChar]];
-	//	}else{
-	//		if (beforeChar==thisChar){
-	//			IPageStr+=difference[0]
-	//		}else{
-	//			let difNum=value[thisChar]-value[beforeChar];
-	//			if(difNum>=0){
-	//				IPageStr+=difference[difNum]
-	//			}else{
-	//				IPageStr+=difference[length+difNum]
-	//			}
-	//		}
-	//	}
-	//	beforeChar=thisChar;
-	//}
-	//let beforeLine='';
-	//for (let i=0;i<height;i++) {
-	//	let thisLine=str.substring(i*width,(i+1)*width);
-	//	if(i!=0){
-	//		for(let j=0;j<beforeLine.length;j++){
-	//			if (beforeLine[j]==thisLine[j]){
-	//				IPageStr+=difference[0]
-	//			}else{
-	//				let difNum=value[thisLine[j]]-value[beforeLine[j]];
-	//				if(difNum>=0){
-	//					IPageStr+=difference[difNum]
-	//				}else{
-	//					IPageStr+=difference[length+difNum]
-	//				}
-	//			}
-	//		}
-	//	}
-	//	beforeLine=thisLine;
-	//}
-	//return IPageStr;
+
 }
 
 func transcodeBPage()  {
