@@ -57,7 +57,7 @@ func GifToGp(sourcePath string,gifPath string,config *lib.ConfigInfo) (string,er
 
 		buf:=ArraytoBuffer(_array)
 
-		path:=fmt.Sprintf("%s/%d.gp",gpPath,i)
+		path:=fmt.Sprintf("%s/%d-%d.gp",gpPath,i,config.BPointNum)
 		file, err := os.Create(path)
 		if err != nil {
 			return "",err
