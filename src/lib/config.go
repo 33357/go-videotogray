@@ -9,22 +9,22 @@ import (
 )
 
 type ConfigInfo struct {
-	GifWidth	int
-	GifHeight	int
-	GifFrame	int
-	OutWidth	int
-	OutHeight	int
-	OutFrame	int
-	ColorSize	int
-	GvSeconds 	int
-	ZipSeconds 	int
-	BPageNum	int
-	BPointNum	int
-	Thread		int
-	Mp3Bit		string
-	FFMPEGPath	string
-	VideoPath	string
-	OutPath		string
+	SourceWidth		int
+	SourceHeight	int
+	SourceFrame		int
+	OutWidth		int
+	OutHeight		int
+	OutFrame		int
+	ColorSize		int
+	GvSeconds 		int
+	ZipSeconds 		int
+	BPageNum		int
+	BPointNum		int
+	Thread			int
+	Mp3Bit			string
+	FFMPEGPath		string
+	VideoPath		string
+	OutPath			string
 }
 
 func GetConfig() (*ConfigInfo ,error){

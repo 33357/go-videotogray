@@ -4,6 +4,7 @@ import (
 	"../lib"
 	"bytes"
 	"fmt"
+	"github.com/nfnt/resize"
 	"image/png"
 	"io/ioutil"
 	"os"
@@ -17,9 +18,7 @@ func PngToBin(pngFolderPath string,binFolderPath string,config *lib.ConfigInfo) 
 			return err
 		}
 	}
-
 	for i:=1;;i++{
-		fmt.Println(i)
 		binPath:=fmt.Sprintf("%s/%d.bin",binFolderPath,i)
 		_, err = os.Stat(binPath)
 		if err == nil {
@@ -34,6 +33,9 @@ func PngToBin(pngFolderPath string,binFolderPath string,config *lib.ConfigInfo) 
 		image, err := png.Decode(buf)
 		if err != nil {
 			return err
+		}
+		if config.SourceHeight!=config.OutHeight||config.SourceWidth!=config.OutWidth {
+			image= resize.Resize(uint(config.OutWidth), uint(config.OutHeight), image, resize.Lanczos3)
 		}
 		grayArrays := lib.GrayImage(image,config)
 		var array []uint8

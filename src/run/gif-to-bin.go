@@ -31,7 +31,7 @@ func GifToBin(gifPath string,binFolderPath string,config *lib.ConfigInfo) error 
 		return err
 	}
 	fmt.Println("Decode GIF Success")
-	overpaintImage := image.NewRGBA(image.Rect(0, 0, config.GifWidth, config.GifHeight))
+	overpaintImage := image.NewRGBA(image.Rect(0, 0, config.SourceWidth, config.SourceHeight))
 	draw.Draw(overpaintImage, overpaintImage.Bounds(), gif.Image[0], image.Point{}, draw.Src)
 
 	for i, srcImg := range gif.Image {
@@ -41,10 +41,6 @@ func GifToBin(gifPath string,binFolderPath string,config *lib.ConfigInfo) error 
 			continue
 		}
 		draw.Draw(overpaintImage, overpaintImage.Bounds(), srcImg, image.Point{}, draw.Over)
-		//if(config.GifHeight!=config.OutHeight||config.GifWidth!=config.OutWidth){
-		//	_image:= resize.Resize(uint(config.OutWidth), uint(config.OutHeight), overpaintImage, resize.Lanczos3)
-		//	overpaintImage=_image
-		//}
 		grayArrays := lib.GrayImage(overpaintImage,config)
 		var array []uint8
 		for _, arr := range grayArrays {
