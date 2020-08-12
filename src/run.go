@@ -17,15 +17,14 @@ func main() {
 
 	dir, _ := os.Getwd()
 	sourceFolderPath:=path.Join(dir,fmt.Sprintf("%s/%s/source",config.OutPath,getVideoName(config)))
-	gifPath:=fmt.Sprintf("%s/%s_w%d_h%d_f%d.gif",sourceFolderPath,getVideoName(config),config.SourceWidth,config.SourceHeight,config.SourceFrame)
 	mp3Path:=fmt.Sprintf("%s/%s_%s.mp3",sourceFolderPath,getVideoName(config),config.Mp3Bit)
 	pngFolderPath:=fmt.Sprintf("%s/%s_w%d_h%d_f%d",sourceFolderPath,getVideoName(config),config.SourceWidth,config.SourceHeight,config.SourceFrame)
 	binFolderPath:=strings.Replace(sourceFolderPath,"source",fmt.Sprintf("w%d_h%d_f%d_s%d/bin",config.OutWidth,config.OutHeight,config.OutFrame,config.ColorSize),1)
-	gipFolderPath:=strings.Replace(binFolderPath,"bin","gip",1)
-	gvFolderPath:=strings.Replace(binFolderPath,"bin","gv",1)
-	//zipFolderPath:=strings.Replace(binFolderPath,"bin","zip",1)
+	gipFolderPath:=strings.Replace(binFolderPath,"bin",fmt.Sprintf("gip/bpo%d",config.BPointNum),1)
+	gvFolderPath:=strings.Replace(binFolderPath,"bin",fmt.Sprintf("gv/bpo%d_bpg%d_gv%d",config.BPointNum,config.BPageNum,config.GvSeconds),1)
+	//zipFolderPath:=strings.Replace(binFolderPath,"bin",fmt.Sprintf("zip/bpo%d_bpg%d_gv%d_zip%d_mp3%s",config.BPointNum,config.BPageNum,config.GvSeconds,config.ZipSeconds,config.Mp3Bit),1)
 
-	err=run.VideoToSource(sourceFolderPath,gifPath,mp3Path,pngFolderPath,config)
+	err=run.VideoToSource(sourceFolderPath,mp3Path,pngFolderPath,config)
 	if err != nil {
 		fmt.Printf(err.Error())
 	}
