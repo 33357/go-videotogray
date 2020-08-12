@@ -10,7 +10,6 @@ func TranscodeGP(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
 }
 
 func getOutArray(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
-	var outArray [] uint8
 	var basisArray [] uint8
 	var differenceArray [] uint8
 	skip:=config.BPointNum+1
@@ -65,6 +64,6 @@ func getOutArray(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
 			}
 		}
 	}
-	outArray=append(basisArray,differenceArray...)
+	outArray:=append(basisArray,differenceArray...)
 	return outArray
 }
