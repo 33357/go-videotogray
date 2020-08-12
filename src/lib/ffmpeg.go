@@ -63,7 +63,7 @@ func VideoToMP3(ffmpegPath string,videoPath string,mp3Bit string ,mp3Path string
 }
 
 func VideoToPNG(ffmpegPath string,videoPath string,width int,height int,frame int,pngFolderPath string)error{
-	cmd := exec.Command(ffmpegPath, "-i",videoPath, "-s", fmt.Sprintf("%d*%d", width,height),"-r",strconv.Itoa(frame),pngFolderPath+"/out%3d.png")
+	cmd := exec.Command(ffmpegPath, "-i",videoPath, "-s", fmt.Sprintf("%d*%d", width,height),"-r",strconv.Itoa(frame),pngFolderPath+"/%d.png")
 	stdout, err := cmd.StdoutPipe()
 	cmd.Stderr = cmd.Stdout
 	if err != nil {

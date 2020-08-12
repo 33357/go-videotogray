@@ -2,14 +2,10 @@ package lib
 
 import "fmt"
 
-func TranscodeGP(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
+func TranscodeGip(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
 	if config.BPointNum >5 {
 		fmt.Printf("BPointNum over 5 :%d\n",config.BPointNum)
 	}
-	return getOutArray(grayArrays,config)
-}
-
-func getOutArray(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
 	var basisArray [] uint8
 	var differenceArray [] uint8
 	skip:=config.BPointNum+1
