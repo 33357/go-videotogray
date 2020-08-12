@@ -7,16 +7,16 @@ import (
 	"os"
 )
 
-func BinToGp(binFolderPath string,gpFolderPath string,config *lib.ConfigInfo) error{
-	_, err := os.Stat(gpFolderPath)
+func BinToGip(binFolderPath string,gipFolderPath string,config *lib.ConfigInfo) error{
+	_, err := os.Stat(gipFolderPath)
 	if err != nil {
-		err:=os.MkdirAll(gpFolderPath,os.ModePerm)
+		err:=os.MkdirAll(gipFolderPath,os.ModePerm)
 		if err!=nil{
 			return err
 		}
 	}
 	for i:=0;;i++{
-		gpPath:=fmt.Sprintf("%s/%d.gp",gpFolderPath,i)
+		gpPath:=fmt.Sprintf("%s/%d.gip",gipFolderPath,i)
 		_, err = os.Stat(gpPath)
 		if err == nil {
 			continue
@@ -38,6 +38,6 @@ func BinToGp(binFolderPath string,gpFolderPath string,config *lib.ConfigInfo) er
 			return err
 		}
 	}
-	fmt.Println("BinToGp Success")
+	fmt.Println("BinToGip Success")
 	return nil
 }

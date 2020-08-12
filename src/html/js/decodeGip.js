@@ -1,4 +1,4 @@
-function decodeGP(array,config){
+function decodeGip(array, config){
     console.log("decodeGP")
     let [basisArrays,differenceArray]=getBasisArrays(array,config)
     let grayArray=getGrayArray(basisArrays,differenceArray,config)

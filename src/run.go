@@ -21,7 +21,7 @@ func main() {
 	mp3Path:=fmt.Sprintf("%s/%s_%s.mp3",sourceFolderPath,getVideoName(config),config.Mp3Bit)
 	pngFolderPath:=fmt.Sprintf("%s/%s_w%d_h%d_f%d",sourceFolderPath,getVideoName(config),config.GifWidth,config.GifHeight,config.GifFrame)
 	binFolderPath:=strings.Replace(sourceFolderPath,"source",fmt.Sprintf("w%d_h%d_f%d_s%d/bin",config.GifWidth,config.GifHeight,config.OutFrame,config.ColorSize),1)
-	gpFolderPath:=strings.Replace(binFolderPath,"bin","gp",1)
+	gipFolderPath:=strings.Replace(binFolderPath,"bin","gip",1)
 	gvFolderPath:=strings.Replace(binFolderPath,"bin","gv",1)
 	//zipFolderPath:=strings.Replace(binFolderPath,"bin","zip",1)
 
@@ -33,7 +33,7 @@ func main() {
 	if err != nil {
 		fmt.Printf(err.Error())
 	}
-	err=run.BinToGp(binFolderPath,gpFolderPath,config)
+	err=run.BinToGip(binFolderPath,gipFolderPath,config)
 	if err != nil {
 		fmt.Printf(err.Error())
 	}
