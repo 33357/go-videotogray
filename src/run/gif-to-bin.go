@@ -52,6 +52,4 @@ func GifToBin(gifPath string,binFolderPath string,config *lib.ConfigInfo) error 
 	return nil
 }
 
-//图片灰化处理
-
 

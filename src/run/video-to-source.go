@@ -17,11 +17,11 @@ func VideoToSource(sourceFolderPath string,gifPath string,mp3Path string,pngFold
 		}
 	}
 
-	_, err = os.Stat(gifPath)
-	if err != nil {
-		lib.VideoToGIF(path.Join(dir,config.FFMPEGPath),path.Join(dir,config.VideoPath),config.SourceWidth,config.SourceHeight,config.SourceFrame,gifPath)
-	}
-	fmt.Println("VideoToGif Success")
+	//_, err = os.Stat(gifPath)
+	//if err != nil {
+	//	lib.VideoToGIF(path.Join(dir,config.FFMPEGPath),path.Join(dir,config.VideoPath),config.SourceWidth,config.SourceHeight,config.SourceFrame,gifPath)
+	//}
+	//fmt.Println("VideoToGif Success")
 
 	_, err = os.Stat(mp3Path)
 	if err != nil {

@@ -22,7 +22,7 @@ func main() {
 	pngFolderPath:=fmt.Sprintf("%s/%s_w%d_h%d_f%d",sourceFolderPath,getVideoName(config),config.SourceWidth,config.SourceHeight,config.SourceFrame)
 	binFolderPath:=strings.Replace(sourceFolderPath,"source",fmt.Sprintf("w%d_h%d_f%d_s%d/bin",config.OutWidth,config.OutHeight,config.OutFrame,config.ColorSize),1)
 	gipFolderPath:=strings.Replace(binFolderPath,"bin","gip",1)
-	//gvFolderPath:=strings.Replace(binFolderPath,"bin","gv",1)
+	gvFolderPath:=strings.Replace(binFolderPath,"bin","gv",1)
 	//zipFolderPath:=strings.Replace(binFolderPath,"bin","zip",1)
 
 	err=run.VideoToSource(sourceFolderPath,gifPath,mp3Path,pngFolderPath,config)
@@ -37,10 +37,10 @@ func main() {
 	if err != nil {
 		fmt.Printf(err.Error())
 	}
-	//err=run.BinToGv(binFolderPath,gvFolderPath,config)
-	//if err != nil {
-	//	fmt.Printf(err.Error())
-	//}
+	err=run.BinToGv(binFolderPath,gvFolderPath,config)
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
 	//err=run.GvToZip(gvFolderPath,zipFolderPath,config)
 	//if err != nil {
 	//	fmt.Printf(err.Error())
