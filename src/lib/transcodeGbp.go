@@ -1,29 +1,26 @@
 package lib
 
-func TranscodeGbp(IPageArrays [] []uint8,PPageArrays[] [] [] uint8,BPageArrays[] [] [] uint8,config *ConfigInfo) [] uint8 {
+func TranscodeGbp(beforePageArray [] []uint8,afterPageArray [] [] uint8,bPageArrays[] [] [] uint8,config *ConfigInfo) [] uint8 {
 	var basisArray [] uint8
 	var differenceArray [] uint8
-	beforePageArrays:=IPageArrays
 	pointSkip:=config.BPointNum+1
 	pageSkip:=config.BPageNum+1
-	for index, arr := range PPageArrays{
-		afterPageArrays:=arr
-		for h:=0;h<config.OutHeight;h+=pointSkip {
-			for w:=0;w<config.OutWidth;w+=pointSkip {
-				if index==len(PPageArrays)-1{
-					pageSkip=len(BPageArrays)-config.BPointNum*len(PPageArrays)
-				}
-				bd:=int8(beforePageArrays[h][w])-int8(afterPageArrays[h][w])
+	for h:=0;h<config.OutHeight;h+=pointSkip {
+		for w:=0;w<config.OutWidth;w+=pointSkip {
+			if index==len(PPageArray)-1{
+				pageSkip=len(BPageArrays)-config.BPointNum*len(PPageArrays)
+			}
+			bd:=int8(beforePageArray[h][w])-int8(afterPageArray[h][w])
+			if bd<0 {
+				bd=-bd
+			}
+			if bd>int8(pageSkip){
+				bd=int8(beforePageArray[h][w])-int8(afterPageArray[h][w])
 				if bd<0 {
-					bd=-bd
+					bd+=int8(config.ColorSize)
 				}
-				if bd>int8(pageSkip){
-					bd=int8(beforePageArrays[h][w])-int8(afterPageArrays[h][w])
-					if bd<0 {
-						bd+=int8(config.ColorSize)
-					}
-					basisArray=append(basisArray,uint8(bd))
-				}
+				basisArray=append(basisArray,uint8(bd))
+			}
 				//if w!=0 {
 				//	dd:=int8(beforePageArray[h][w])-int8(arr[h][w])
 				//	if dd<0 {
@@ -56,9 +53,7 @@ func TranscodeGbp(IPageArrays [] []uint8,PPageArrays[] [] [] uint8,BPageArrays[]
 				//		}
 				//	}
 				//}
-			}
 		}
-		beforePageArrays=afterPageArrays
 	}
 	outArray:=append(basisArray,differenceArray...)
 	return outArray

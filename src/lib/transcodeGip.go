@@ -2,7 +2,7 @@ package lib
 
 import "fmt"
 
-func TranscodeGip(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
+func TranscodeGip(IPageArray [][] uint8,config *ConfigInfo) [] uint8 {
 	if config.BPointNum >5 {
 		fmt.Printf("BPointNum over 5 :%d\n",config.BPointNum)
 	}
@@ -15,19 +15,19 @@ func TranscodeGip(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
 	}
 	for h:=0;h<config.OutHeight;h+=skip {
 		for w:=0;w<config.OutWidth;w+=skip{
-			reGrayArrays[h][w]=grayArrays[h][w]
-			basisArray=append(basisArray,grayArrays[h][w])
+			reGrayArrays[h][w]=IPageArray[h][w]
+			basisArray=append(basisArray,IPageArray[h][w])
 			if w!=0 {
-				d:=int8(grayArrays[h][w-skip])- int8(grayArrays[h][w])
+				d:=int8(IPageArray[h][w-skip])- int8(IPageArray[h][w])
 				if d<0{
 					d=-d
 				}
 				for ws:=1;ws<skip;ws++{
 					if d==0{
-						reGrayArrays[h][w -skip+ws]=grayArrays[h][w-skip]
+						reGrayArrays[h][w -skip+ws]=IPageArray[h][w-skip]
 					}else if d>int8(skip){
-						reGrayArrays[h][w -skip+ws]=grayArrays[h][w-skip+ws]
-						differenceArray=append(differenceArray,grayArrays[h][w-skip+ws])
+						reGrayArrays[h][w -skip+ws]=IPageArray[h][w-skip+ws]
+						differenceArray=append(differenceArray,IPageArray[h][w-skip+ws])
 					}else{
 						if reGrayArrays[h][w-skip]>reGrayArrays[h][w] {
 							if int8(ws)<d{
@@ -53,7 +53,7 @@ func TranscodeGip(grayArrays [][] uint8,config *ConfigInfo) [] uint8 {
 					}
 					if d>int8(skip){
 						for hs:=1;hs<skip;hs++ {
-							differenceArray = append(differenceArray, grayArrays[h-skip+hs][w-skip+ws])
+							differenceArray = append(differenceArray,IPageArray[h-skip+hs][w-skip+ws])
 						}
 					}
 				}

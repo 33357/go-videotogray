@@ -26,12 +26,12 @@ func TranscodeGV(array [] [] []uint8,config *ConfigInfo) [] uint8 {
 	IPageArray:=TranscodeGip(IPageArrays,config)
 	arr=append(arr,IPageArray...)
 	fmt.Println(len(IPageArray))
-	PPageArray:=TranscodeGpp(IPageArrays,PPageArrays,config)
-	arr=append(arr,PPageArray...)
+	PPageArray:=TranscodeGpp(IPageArrays,PPageArrays[0],config)
+	//arr=append(arr,PPageArray...)
 	fmt.Println(len(PPageArray))
-	BPageArray:=TranscodeGbp(IPageArrays,PPageArrays,BPageArrays,config)
-	arr=append(arr,BPageArray...)
-	fmt.Println(len(BPageArray))
-	fmt.Println(len(arr))
+	//BPageArray:=TranscodeGbp(IPageArrays,PPageArrays,BPageArrays,config)
+	//arr=append(arr,BPageArray...)
+	//fmt.Println(len(BPageArray))
+	//fmt.Println(len(arr))
 	return arr
 }

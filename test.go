@@ -5,7 +5,10 @@ import (
 )
 
 func main() {
-	grayArrays :=make([][] uint8,8)
-	grayArrays[0][0]=1
-	fmt.Println(grayArrays[0][0])
+	bd:=int8(1)-int8(2)
+	fmt.Println(uint8(bd))
+	if bd<0 {
+		bd+=int8(25)
+	}
+	fmt.Println(uint8(bd))
 }
