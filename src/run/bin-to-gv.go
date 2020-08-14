@@ -29,7 +29,7 @@ func BinToGv(binFolderPath string,gvFolderPath string,config *lib.ConfigInfo) er
 			grayArrays=append(grayArrays,byteArray[j*config.OutWidth:(j+1)*config.OutWidth])
 		}
 		arrs= append(arrs, grayArrays)
-		if (i+1)%(config.GvSeconds*config.OutFrame)==0 {
+		if i%(config.GvSeconds*config.OutFrame)==0 {
 			array:=lib.TranscodeGV(arrs,config)
 			lib.ArraySaveAsBufferFile(array,fmt.Sprintf("%s/%d.gv",gvFolderPath,index))
 			index++

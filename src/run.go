@@ -21,8 +21,8 @@ func main() {
 	pngFolderPath:=fmt.Sprintf("%s/%s_w%d_h%d_f%d",sourceFolderPath,getVideoName(config),config.SourceWidth,config.SourceHeight,config.SourceFrame)
 	binFolderPath:=strings.Replace(sourceFolderPath,"source",fmt.Sprintf("w%d_h%d_f%d_s%d/bin",config.OutWidth,config.OutHeight,config.OutFrame,config.ColorSize),1)
 	//gipFolderPath:=strings.Replace(binFolderPath,"bin",fmt.Sprintf("gip/bpo%d",config.BPointNum),1)
-	gppFolderPath:=strings.Replace(binFolderPath,"bin",fmt.Sprintf("gpp/bpo%d_bpg%d_gv%d",config.BPointNum,config.BPageNum,config.GvSeconds),1)
-	//gbpFolderPath:=strings.Replace(binFolderPath,"bin",fmt.Sprintf("gbp/bpo%d_bpg%d_gv%d",config.BPointNum,config.BPageNum,config.GvSeconds),1)
+	//gppFolderPath:=strings.Replace(binFolderPath,"bin",fmt.Sprintf("gpp/bpo%d_bpg%d_gv%d",config.BPointNum,config.BPageNum,config.GvSeconds),1)
+	gbpFolderPath:=strings.Replace(binFolderPath,"bin",fmt.Sprintf("gbp/bpo%d_bpg%d_gv%d",config.BPointNum,config.BPageNum,config.GvSeconds),1)
 	//gvFolderPath:=strings.Replace(binFolderPath,"bin",fmt.Sprintf("gv/bpo%d_bpg%d_gv%d",config.BPointNum,config.BPageNum,config.GvSeconds),1)
 	//zipFolderPath:=strings.Replace(binFolderPath,"bin",fmt.Sprintf("zip/bpo%d_bpg%d_gv%d_zip%d_mp3%s",config.BPointNum,config.BPageNum,config.GvSeconds,config.ZipSeconds,config.Mp3Bit),1)
 
@@ -34,7 +34,7 @@ func main() {
 	if err != nil {
 		fmt.Printf(err.Error())
 	}
-	err=run.BinToGpp(binFolderPath,gppFolderPath,config)
+	err=run.BinToGbp(binFolderPath,gbpFolderPath,config)
 	if err != nil {
 		fmt.Printf(err.Error())
 	}

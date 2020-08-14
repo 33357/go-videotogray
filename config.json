@@ -1,10 +1,10 @@
 {
   "sourceWidth": 1920,
   "sourceHeight": 1080,
-  "sourceFrame": 12,
+  "sourceFrame": 24,
   "outWidth": 1920,
   "outHeight": 1080,
-  "outFrame": 12,
+  "outFrame": 24,
   "colorSize": 16,
   "gvSeconds": 5,
   "zipSeconds": 20,

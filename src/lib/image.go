@@ -37,3 +37,11 @@ func changeColorSize(gray int, size int) uint8 {
 		return uint8(size-1)
 	}
 }
+
+func ByteArrayToGrayArrays(byteArray [] byte,config *ConfigInfo)[][]uint8  {
+	var grayArrays [][]uint8
+	for i := 0; i < config.OutHeight; i++ {
+		grayArrays = append(grayArrays, byteArray[i*config.OutWidth:(i+1)*config.OutWidth])
+	}
+	return grayArrays
+}

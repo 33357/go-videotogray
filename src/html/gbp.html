@@ -2,8 +2,6 @@
 <html>
 <head> 
     <meta charset="utf-8"> 
-    <script type="text/javascript" src="/js/decodeGip.js"></script>
-    <script type="text/javascript" src="/js/decodeGpp.js"></script>
     <script type="text/javascript" src="/js/decodeGbp.js"></script>
     <title>gbp</title> 
 </head>
@@ -15,14 +13,16 @@
 
 配置文件：<input type="file" id="file1" accept=".json" />
 
-gip图片文件：<input type="file" id="file2" accept=".gip" />
+bin图片文件：<input type="file" id="file2" accept=".bin" />
 
-gpp图片文件：<input type="file" id="file2" accept=".gpp" />
+bin图片文件：<input type="file" id="file2" accept=".bin" />
 
 gbp图片文件：<input type="file" id="file2" accept=".gbp" />
 
 <script type="text/javascript">
     let config=null;
+    let binArray1=null;
+    let binArray2=null;
     let file1 = document.getElementById('file1');
     file1.onchange = function () {
         let file = file1.files[0];
@@ -30,6 +30,34 @@ gbp图片文件：<input type="file" id="file2" accept=".gbp" />
         reader.readAsText(file);
         reader.onload = function () {
             config=JSON.parse(reader.result)
+        }
+    }
+    let file2 = document.getElementById('file1');
+    file2.onchange = function () {
+        let file = file2.files[0];
+        let reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = function () {
+            let byteArray = new Uint8Array(reader.result);
+            let grayArrays=[]
+            for (let i=0;i<config['outHeight'];i++) {
+                grayArrays.push(byteArray.slice(i*config['outWidth'],(i+1)*config['outWidth'])
+            }
+            binArray1=grayArrays
+        }
+    }
+    let file3 = document.getElementById('file1');
+    file3.onchange = function () {
+        let file = file2.files[0];
+        let reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = function () {
+            let byteArray = new Uint8Array(reader.result);
+            let grayArrays=[]
+            for (let i=0;i<config['outHeight'];i++) {
+                grayArrays.push(byteArray.slice(i*config['outWidth'],(i+1)*config['outWidth'])
+            }
+            binArray2=grayArrays
         }
     }
     let file2 = document.getElementById('file2');
@@ -45,8 +73,8 @@ gbp图片文件：<input type="file" id="file2" accept=".gbp" />
             reader.readAsArrayBuffer(file);
             reader.onload = function () {
                 let time=new Date();
-                let array = new Uint8Array(reader.result);
-                let grayArrays=decodeGip(array,config)
+                let binArray = new Uint8Array(reader.result);
+                let grayArrays=decodeGbp(binArray1, binArray2,binArray,config,1)
                 console.log('load:',new Date()-time)
                 let imgData=ctx.createImageData(config['outWidth'],config['outHeight']);
                 for (let i=0;i<config['outHeight'];i++)

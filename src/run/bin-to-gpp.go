@@ -17,7 +17,7 @@ func BinToGpp(binFolderPath string,gppFolderPath string,config *lib.ConfigInfo) 
 	}
 	for i:=1;;i++ {
 		indexb := i
-		indexp := indexb + 3
+		indexp := indexb + 1
 		gppPath := fmt.Sprintf("%s/%d.gpp", gppFolderPath, indexp)
 		bin1Path := fmt.Sprintf("%s/%d.bin", binFolderPath, indexb)
 		bin2Path := fmt.Sprintf("%s/%d.bin", binFolderPath, indexp)
