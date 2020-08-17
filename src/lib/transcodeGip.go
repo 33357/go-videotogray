@@ -1,65 +1,85 @@
 package lib
 
-import "fmt"
+func TranscodeGip(GrayArray [][] uint8,config *ConfigInfo) [] uint8 {
+	return TranscodeIPage(GrayArray,config)
+}
 
-func TranscodeGip(IPageArray [][] uint8,config *ConfigInfo) [] uint8 {
-	if config.BPointNum >5 {
-		fmt.Printf("BPointNum over 5 :%d\n",config.BPointNum)
-	}
+func TranscodeIPage(IPageArray [][] uint8,config *ConfigInfo) [] uint8  {
 	var basisArray [] uint8
 	var differenceArray [] uint8
-	skip:=config.BPointNum+1
-	reGrayArrays := make([][]uint8, config.OutHeight)
+	reGrayArray:= make([][]uint8, config.OutHeight)
 	for i:=0;i<config.OutHeight;i++ {
-		reGrayArrays[i] = make([]uint8, config.OutWidth)
+		reGrayArray[i] = make([]uint8, config.OutWidth)
 	}
-	for h:=0;h<config.OutHeight;h+=skip {
-		for w:=0;w<config.OutWidth;w+=skip{
-			reGrayArrays[h][w]=IPageArray[h][w]
-			basisArray=append(basisArray,IPageArray[h][w])
-			if w!=0 {
-				d:=int8(IPageArray[h][w-skip])- int8(IPageArray[h][w])
-				if d<0{
-					d=-d
-				}
-				for ws:=1;ws<skip;ws++{
-					if d==0{
-						reGrayArrays[h][w -skip+ws]=IPageArray[h][w-skip]
-					}else if d>int8(skip){
-						reGrayArrays[h][w -skip+ws]=IPageArray[h][w-skip+ws]
-						differenceArray=append(differenceArray,IPageArray[h][w-skip+ws])
-					}else{
-						if reGrayArrays[h][w-skip]>reGrayArrays[h][w] {
-							if int8(ws)<d{
-								reGrayArrays[h][w -skip+ws]=reGrayArrays[h][w-skip]-uint8(ws)
-							}else{
-								reGrayArrays[h][w -skip+ws]=reGrayArrays[h][w-skip]-uint8(d)
-							}
-						}else{
-							if int8(ws)<d{
-								reGrayArrays[h][w -skip+ws]=reGrayArrays[h][w-skip]+uint8(ws)
-							}else{
-								reGrayArrays[h][w -skip+ws]=reGrayArrays[h][w-skip]+uint8(d)
-							}
-						}
-					}
+	maxRowSkip:=config.MaxBRowNum+1
+	maxColumnSkip:=config.MaxBColumnNum+1
+	for h:=0;h<config.OutHeight;h+=maxColumnSkip {
+		for w:=maxRowSkip;w<config.OutWidth;w+=maxRowSkip {
+			basisArray=append(basisArray,IPageArray[h][w-maxRowSkip])
+			TranscodeBRow(IPageArray[h][w-maxRowSkip],IPageArray[h][w],IPageArray[h][w-maxRowSkip:w],&differenceArray,&reGrayArray,h,w)
+			if w+maxRowSkip>=config.OutWidth{
+				if w==config.OutWidth-1{
+					basisArray=append(basisArray,IPageArray[h][w])
+				}else{
+					basisArray=append(basisArray,IPageArray[h][w],IPageArray[h][config.OutWidth-1])
+					TranscodeBRow(IPageArray[h][w],IPageArray[h][config.OutWidth-1],IPageArray[h][w:config.OutWidth-1],&differenceArray,&reGrayArray,h,w)
 				}
 			}
-			if h!=0&&w!=0 {
-				for ws:=0;ws<skip;ws++{
-					d:=int8(reGrayArrays[h-skip][w-skip+ws])- int8(reGrayArrays[h][w-skip+ws])
-					if d<0{
-						d=-d
-					}
-					if d>int8(skip){
-						for hs:=1;hs<skip;hs++ {
-							differenceArray = append(differenceArray,IPageArray[h-skip+hs][w-skip+ws])
-						}
-					}
+		}
+		if h != 0 {
+			TranscodeBColumn(reGrayArray[h-maxColumnSkip],reGrayArray[h],IPageArray[h-maxColumnSkip:h],&differenceArray)
+			if h+maxColumnSkip>=config.OutHeight&&h!=config.OutHeight-1 {
+				TranscodeBColumn(reGrayArray[h],reGrayArray[config.OutHeight-1],IPageArray[h:config.OutHeight-1],&differenceArray)
+			}
+		}
+	}
+
+	return append(basisArray,differenceArray...)
+}
+
+func TranscodeBRow(beforePoint uint8,afterPoint uint8,betweenPoints [] uint8,differenceArray *[] uint8,reGrayArrays *[] [] uint8,h int ,w int) {
+	pd:=int(beforePoint)-int(afterPoint)
+	if pd<0{
+		pd=-pd
+	}
+	rowSkip:=len(betweenPoints)
+	rw:=w-rowSkip
+	for rs:=0;rs<rowSkip;rs++{
+		if pd>rowSkip{
+			*differenceArray = append(*differenceArray, betweenPoints[rs])
+			(*reGrayArrays)[h][rw+rs] = betweenPoints[rs]
+		}else if pd==0 {
+			(*reGrayArrays)[h][rw+rs]=beforePoint
+		}else{
+			if beforePoint>afterPoint{
+				if rs<pd{
+					(*reGrayArrays)[h][rw+rs]=(*reGrayArrays)[h][rw]-uint8(rs)
+				}else{
+					(*reGrayArrays)[h][rw+rs]=(*reGrayArrays)[h][rw]-uint8(pd)
+				}
+			}else{
+				if rs<pd{
+					(*reGrayArrays)[h][rw+rs]=(*reGrayArrays)[h][rw]+uint8(rs)
+				}else{
+					(*reGrayArrays)[h][rw+rs]=(*reGrayArrays)[h][rw]+uint8(pd)
 				}
 			}
 		}
 	}
-	outArray:=append(basisArray,differenceArray...)
-	return outArray
+}
+
+func TranscodeBColumn(beforeRow []uint8,afterRow [] uint8,betweenRows [][] uint8,differenceArray *[] uint8) {
+	columnSkip:=len(betweenRows)
+	length:=len(beforeRow)
+	for cs:=0;cs<length;cs++{
+		cd:=int(beforeRow[cs])- int(afterRow[cs])
+		if cd<0{
+			cd=-cd
+		}
+		if cd>columnSkip{
+			for hs:=0;hs<columnSkip;hs++ {
+				*differenceArray = append(*differenceArray,betweenRows[hs][cs])
+			}
+		}
+	}
 }

@@ -4,7 +4,7 @@ func TranscodeGV(array [] [] []uint8,config *ConfigInfo) [] uint8 {
 	var IPageArrays [] [] [] uint8
 	var BPageArrays [] [] [] [] uint8
 	length:=len(array)
-	pageSkip:=config.BPageNum+1
+	pageSkip:=config.MaxBPageNum+1
 	for i:=0;i<length;i+=pageSkip {
 		IPageArrays=append(IPageArrays,array[i])
 		var _BPageArrays [] [] [] uint8

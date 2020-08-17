@@ -15,9 +15,9 @@ func BinToGbp(binFolderPath string,gbpFolderPath string,config *lib.ConfigInfo) 
 			return err
 		}
 	}
-	for i:=1;;i+=config.BPageNum+1 {
+	for i:=1;;i+=config.MaxBPageNum+1 {
 		indexb1 := i
-		indexp2 := indexb1 + config.BPageNum+1
+		indexp2 := indexb1 + config.MaxBPageNum+1
 		var gbpPaths [] string
 		var bPageGrayArrays [] [] []uint8
 		for j:=indexb1+1;j<indexp2;j++{

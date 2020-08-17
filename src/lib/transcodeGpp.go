@@ -5,18 +5,18 @@ import "fmt"
 func TranscodeGpp(beforePageArray [] []uint8,PPageArray[] [] uint8,config *ConfigInfo) [] uint8 {
 	var basisArray [] uint8
 	var differenceArray [] uint8
-	pointSkip:=config.BPointNum+1
+	//pointSkip:=config.BPointNum+1
 	rePPageArrays := make([][]int8, config.OutHeight)
 	for i:=0;i<config.OutHeight;i++ {
 		rePPageArrays[i] = make([]int8, config.OutWidth)
 	}
-	for h:=0;h<config.OutHeight;h+=pointSkip {
-		for w:=0;w<config.OutWidth;w+=pointSkip {
-			bd:=int8(beforePageArray[h][w])-int8(PPageArray[h][w])
-			//if bd<0 {
-			//	bd+=int8(config.ColorSize)
-			//}
-			basisArray=append(basisArray,uint8(bd))
+	//for h:=0;h<config.OutHeight;h+=pointSkip {
+	//	for w:=0;w<config.OutWidth;w+=pointSkip {
+	//		bd:=int8(beforePageArray[h][w])-int8(PPageArray[h][w])
+	//		//if bd<0 {
+	//		//	bd+=int8(config.ColorSize)
+	//		//}
+	//		basisArray=append(basisArray,uint8(bd))
 			//rePPageArrays[h][w]=bd
 			//if w!=0 {
 			//	dd:=rePPageArrays[h][w-pointSkip]-rePPageArrays[h][w]
@@ -63,8 +63,8 @@ func TranscodeGpp(beforePageArray [] []uint8,PPageArray[] [] uint8,config *Confi
 			//		}
 			//	}
 			//}
-		}
-	}
+	//	}
+	//}
 	fmt.Println(len(basisArray),len(differenceArray))
 	outArray:=append(basisArray,differenceArray...)
 	return outArray
