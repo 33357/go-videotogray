@@ -38,18 +38,27 @@ bin图片文件：<input type="file" id="file2" accept=".bin" />
             let reader = new FileReader();
             reader.readAsArrayBuffer(file);
             reader.onload = function () {
-                console.log(new Date()-time)
-                let array = new Uint8Array(reader.result);
+                let binArray = new Uint8Array(reader.result);
+                console.log('load:',new Date()-time)
+                let grayArray=[]
+                for (let i=0;i<config['outWidth'];i++){
+                    grayArray.push(binArray.slice(i*config['outHeight'],(i+1)*config['outHeight']))
+                }
+                console.log('decode:',new Date()-time)
                 let imgData=ctx.createImageData(config['outWidth'],config['outHeight']);
-                for (let i=0;i<imgData.data.length;i+=4)
+                for (let i=0;i<config['outWidth'];i++)
                 {
-                    let color=array[i/4]*255/config['colorSize']
-                    imgData.data[i+0]=color;
-                    imgData.data[i+1]=color;
-                    imgData.data[i+2]=color;
-                    imgData.data[i+3]=255;
+                    for (let j=0;j<config['outHeight'];j++)
+                    {
+                        let color=grayArray[i][j]*255/config['colorSize']
+                        imgData.data[i*4+0+j*config['outWidth']*4]=color;
+                        imgData.data[i*4+1+j*config['outWidth']*4]=color;
+                        imgData.data[i*4+2+j*config['outWidth']*4]=color;
+                        imgData.data[i*4+3+j*config['outWidth']*4]=255;
+                    }
                 }
                 ctx.putImageData(imgData,0,0);
+                console.log('draw:',new Date()-time)
             }
         }
     }

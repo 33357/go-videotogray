@@ -5,13 +5,13 @@ import (
 )
 
 func GrayImage(m image.Image,config *ConfigInfo) [] [] uint8 {
-	grayArrays := make([][]uint8, config.OutHeight)
+	grayArrays := make([][]uint8, config.OutWidth)
 	for i := range grayArrays {
-		grayArrays[i] = make([]uint8,config.OutWidth)
+		grayArrays[i] = make([]uint8,config.OutHeight)
 	}
-	for i := 0; i < config.OutHeight; i++ {
-		for j := 0; j < config.OutWidth; j++ {
-			colorRgb := m.At(j, i)
+	for i := 0; i < config.OutWidth; i++ {
+		for j := 0; j < config.OutHeight; j++ {
+			colorRgb := m.At(i, j)
 			_r, _g, _b, _ := colorRgb.RGBA()
 			r := _r >> 8
 			g := _g >> 8
@@ -38,10 +38,18 @@ func changeColorSize(gray int, size int) uint8 {
 	}
 }
 
-func ByteArrayToGrayArrays(byteArray [] byte,config *ConfigInfo)[][]uint8  {
+func GrayArrayToByteArray(grayArray [] [] uint8,config *ConfigInfo)[]uint8 {
+	var byteArray []uint8
+	for i := 0; i < config.OutWidth; i++ {
+		byteArray = append(byteArray, grayArray[i]...)
+	}
+	return byteArray
+}
+
+func ByteArrayToGrayArray(byteArray [] byte,config *ConfigInfo)[][]uint8  {
 	var grayArrays [][]uint8
-	for i := 0; i < config.OutHeight; i++ {
-		grayArrays = append(grayArrays, byteArray[i*config.OutWidth:(i+1)*config.OutWidth])
+	for i := 0; i < config.OutWidth; i++ {
+		grayArrays = append(grayArrays, byteArray[i*config.OutHeight:(i+1)*config.OutHeight])
 	}
 	return grayArrays
 }

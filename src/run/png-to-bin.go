@@ -37,12 +37,9 @@ func PngToBin(pngFolderPath string,binFolderPath string,config *lib.ConfigInfo) 
 		if config.SourceHeight!=config.OutHeight||config.SourceWidth!=config.OutWidth {
 			image= resize.Resize(uint(config.OutWidth), uint(config.OutHeight), image, resize.Lanczos3)
 		}
-		grayArrays := lib.GrayImage(image,config)
-		var array []uint8
-		for _, arr := range grayArrays {
-			array=append(array,arr...)
-		}
-		lib.ArraySaveAsBufferFile(array,binPath)
+		grayArray := lib.GrayImage(image,config)
+		byteArray:=lib.GrayArrayToByteArray(grayArray,config)
+		lib.ArraySaveAsBufferFile(byteArray,binPath)
 		if err != nil {
 			return err
 		}

@@ -1,84 +1,89 @@
 package lib
 
+import "fmt"
+
 func TranscodeGip(GrayArray [][] uint8,config *ConfigInfo) [] uint8 {
-	return TranscodeIPage(GrayArray,config)
+	return transcodeIPage(GrayArray,config)
 }
 
-func TranscodeIPage(IPageArray [][] uint8,config *ConfigInfo) [] uint8  {
+func transcodeIPage(IPageArray [][] uint8,config *ConfigInfo) [] uint8  {
 	var basisArray [] uint8
 	var differenceArray [] uint8
-	reGrayArray:= make([][]uint8, config.OutHeight)
-	for i:=0;i<config.OutHeight;i++ {
-		reGrayArray[i] = make([]uint8, config.OutWidth)
+	reGrayArray:= make([][]uint8, config.OutWidth)
+	for i:=0;i<config.OutWidth;i++ {
+		reGrayArray[i] = make([]uint8, config.OutHeight)
 	}
 	maxRowSkip:=config.MaxBRowNum+1
 	maxColumnSkip:=config.MaxBColumnNum+1
-	for h:=0;h<config.OutHeight;h+=maxColumnSkip {
-		for w:=maxRowSkip;w<config.OutWidth;w+=maxRowSkip {
-			basisArray=append(basisArray,IPageArray[h][w-maxRowSkip])
-			TranscodeBRow(IPageArray[h][w-maxRowSkip],IPageArray[h][w],IPageArray[h][w-maxRowSkip:w],&differenceArray,&reGrayArray,h,w)
-			if w+maxRowSkip>=config.OutWidth{
-				if w==config.OutWidth-1{
-					basisArray=append(basisArray,IPageArray[h][w])
-				}else{
-					basisArray=append(basisArray,IPageArray[h][w],IPageArray[h][config.OutWidth-1])
-					TranscodeBRow(IPageArray[h][w],IPageArray[h][config.OutWidth-1],IPageArray[h][w:config.OutWidth-1],&differenceArray,&reGrayArray,h,w)
+	for w:=0;;w+=maxRowSkip {
+		if w>=config.OutWidth-1 {
+			w=config.OutWidth-1
+		}
+		for h:=0;h<config.OutHeight-1;h+=maxColumnSkip {
+			basisArray = append(basisArray, IPageArray[w][h])
+			reGrayArray[w][h]= IPageArray[w][h]
+			if h!=0 {
+				transcodeBColumn(reGrayArray[w][h-maxColumnSkip], reGrayArray[w][h], IPageArray[w][h-maxColumnSkip+1:h], &differenceArray, &reGrayArray, w, h-maxColumnSkip)
+				if h+maxColumnSkip >= config.OutHeight-1{
+					basisArray = append(basisArray, IPageArray[w][config.OutHeight-1])
+					reGrayArray[w][config.OutHeight-1]= IPageArray[w][config.OutHeight-1]
+					transcodeBColumn(reGrayArray[w][h], reGrayArray[w][config.OutHeight-1], IPageArray[w][h+1:config.OutHeight-1], &differenceArray, &reGrayArray, w, h)
 				}
 			}
 		}
-		if h != 0 {
-			TranscodeBColumn(reGrayArray[h-maxColumnSkip],reGrayArray[h],IPageArray[h-maxColumnSkip:h],&differenceArray)
-			if h+maxColumnSkip>=config.OutHeight&&h!=config.OutHeight-1 {
-				TranscodeBColumn(reGrayArray[h],reGrayArray[config.OutHeight-1],IPageArray[h:config.OutHeight-1],&differenceArray)
-			}
+		if w != 0 {
+			transcodeBRow(reGrayArray[w-maxRowSkip],reGrayArray[w],IPageArray[w-maxRowSkip+1:w],&differenceArray)
+		}
+		if w>=config.OutWidth-1 {
+			break
 		}
 	}
-
+	fmt.Println(len(basisArray),len(differenceArray))
 	return append(basisArray,differenceArray...)
 }
 
-func TranscodeBRow(beforePoint uint8,afterPoint uint8,betweenPoints [] uint8,differenceArray *[] uint8,reGrayArrays *[] [] uint8,h int ,w int) {
-	pd:=int(beforePoint)-int(afterPoint)
-	if pd<0{
-		pd=-pd
+func transcodeBColumn(beforeColumnPoint uint8,afterColumnPoint uint8,betweenColumnPoints [] uint8,differenceArray *[] uint8,reGrayArrays *[] [] uint8,w int ,ch int) {
+	cd:=int(beforeColumnPoint)-int(afterColumnPoint)
+	if cd<0{
+		cd=-cd
 	}
-	rowSkip:=len(betweenPoints)
-	rw:=w-rowSkip
-	for rs:=0;rs<rowSkip;rs++{
-		if pd>rowSkip{
-			*differenceArray = append(*differenceArray, betweenPoints[rs])
-			(*reGrayArrays)[h][rw+rs] = betweenPoints[rs]
-		}else if pd==0 {
-			(*reGrayArrays)[h][rw+rs]=beforePoint
+	columnSkip:=len(betweenColumnPoints)+1
+	for cs:=1;cs<columnSkip;cs++{
+		h:=ch+cs
+		if cd>columnSkip{
+			*differenceArray = append(*differenceArray,betweenColumnPoints[cs-1])
+			(*reGrayArrays)[w][h] = betweenColumnPoints[cs-1]
+		}else if cd==0 {
+			(*reGrayArrays)[w][h] = beforeColumnPoint
 		}else{
-			if beforePoint>afterPoint{
-				if rs<pd{
-					(*reGrayArrays)[h][rw+rs]=(*reGrayArrays)[h][rw]-uint8(rs)
+			if beforeColumnPoint>afterColumnPoint{
+				if cs<cd{
+					(*reGrayArrays)[w][h]=beforeColumnPoint-uint8(cs)
 				}else{
-					(*reGrayArrays)[h][rw+rs]=(*reGrayArrays)[h][rw]-uint8(pd)
+					(*reGrayArrays)[w][h]=beforeColumnPoint-uint8(cd)
 				}
 			}else{
-				if rs<pd{
-					(*reGrayArrays)[h][rw+rs]=(*reGrayArrays)[h][rw]+uint8(rs)
+				if cs<cd{
+					(*reGrayArrays)[w][h]=beforeColumnPoint+uint8(cs)
 				}else{
-					(*reGrayArrays)[h][rw+rs]=(*reGrayArrays)[h][rw]+uint8(pd)
+					(*reGrayArrays)[w][h]=beforeColumnPoint+uint8(cd)
 				}
 			}
 		}
 	}
 }
 
-func TranscodeBColumn(beforeRow []uint8,afterRow [] uint8,betweenRows [][] uint8,differenceArray *[] uint8) {
-	columnSkip:=len(betweenRows)
-	length:=len(beforeRow)
-	for cs:=0;cs<length;cs++{
-		cd:=int(beforeRow[cs])- int(afterRow[cs])
+func transcodeBRow(beforeRowColumn []uint8,afterRowColumn [] uint8,betweenRowColumns [][] uint8,differenceArray *[] uint8) {
+	rowSkip:=len(betweenRowColumns)+1
+	length:=len(beforeRowColumn)
+	for h:=0;h<length;h++{
+		cd:=int(beforeRowColumn[h])- int(afterRowColumn[h])
 		if cd<0{
 			cd=-cd
 		}
-		if cd>columnSkip{
-			for hs:=0;hs<columnSkip;hs++ {
-				*differenceArray = append(*differenceArray,betweenRows[hs][cs])
+		if cd>rowSkip{
+			for rs:=1;rs<rowSkip;rs++ {
+				*differenceArray = append(*differenceArray,betweenRowColumns[rs-1][h])
 			}
 		}
 	}

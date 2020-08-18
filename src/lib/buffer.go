@@ -8,7 +8,7 @@ import (
 )
 
 func ArraySaveAsBufferFile(array [] uint8,path string) error {
-	buf,err:=arraytoBuffer(array)
+	buf,err:=arrayToBuffer(array)
 	if err != nil {
 		return err
 	}
@@ -25,7 +25,7 @@ func ArraySaveAsBufferFile(array [] uint8,path string) error {
 	return nil
 }
 
-func arraytoBuffer(arr [] uint8)(*bytes.Buffer,error){
+func arrayToBuffer(arr [] uint8)(*bytes.Buffer,error){
 	buf := new(bytes.Buffer)
 	for _,value := range arr{
 		err := binary.Write(buf, binary.LittleEndian,value)

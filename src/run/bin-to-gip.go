@@ -26,12 +26,8 @@ func BinToGip(binFolderPath string,gipFolderPath string,config *lib.ConfigInfo) 
 		if err != nil {
 			break
 		}
-
-		var grayArrays [][]uint8
-		for j:=0;j<config.OutHeight;j++ {
-			grayArrays=append(grayArrays,byteArray[j*config.OutWidth:(j+1)*config.OutWidth])
-		}
-		array:=lib.TranscodeGip(grayArrays,config)
+		grayArray:=lib.ByteArrayToGrayArray(byteArray,config)
+		array:=lib.TranscodeGip(grayArray,config)
 		err=lib.ArraySaveAsBufferFile(array,gipPath)
 		if err != nil {
 			return err

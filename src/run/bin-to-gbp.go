@@ -36,21 +36,21 @@ func BinToGbp(binFolderPath string,gbpFolderPath string,config *lib.ConfigInfo) 
 			return err
 		}
 
-		grayArrays1:=lib.ByteArrayToGrayArrays(byteArray1,config)
+		grayArrays1:=lib.ByteArrayToGrayArray(byteArray1,config)
 
 		byteArray2, err := ioutil.ReadFile(bin2Path)
 		if err != nil {
 			return err
 		}
 
-		grayArrays2:=lib.ByteArrayToGrayArrays(byteArray2,config)
+		grayArrays2:=lib.ByteArrayToGrayArray(byteArray2,config)
 
 		for _,path :=range binPaths{
 			byteArray, err := ioutil.ReadFile(path)
 			if err != nil {
 				return err
 			}
-			grayArrays:=lib.ByteArrayToGrayArrays(byteArray,config)
+			grayArrays:=lib.ByteArrayToGrayArray(byteArray,config)
 			bPageGrayArrays=append(bPageGrayArrays,grayArrays)
 		}
 

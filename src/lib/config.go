@@ -3,7 +3,6 @@ package lib
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"os"
 	"path"
 )
@@ -42,7 +41,6 @@ func GetConfig() (*ConfigInfo ,error){
 	if err != nil {
 		return nil,errors.New(err.Error())
 	} else {
-		fmt.Println("GetConfig success")
 		return &config,nil
 	}
 }

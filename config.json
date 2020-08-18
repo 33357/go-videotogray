@@ -8,7 +8,7 @@
   "colorSize": 16,
   "gvSeconds": 5,
   "zipSeconds": 20,
-  "maxBRowNum": 2,
+  "maxBRowNum": 1,
   "maxBColumnNum": 1,
   "maxBPageNum": 2,
   "thread": 4,
