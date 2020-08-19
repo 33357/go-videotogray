@@ -1,105 +1,133 @@
-function decodeGbp(binArray1,binArray2,binArray,config,index){
-    console.log("decodeGbP")
-    let grayArray=getBPageGrayArray(binArray1,binArray2,binArray,config,index)
-    return grayArray
+function decodeGbp(beforePageArray,afterPageArray,byteArray,config,bPageLength){
+    console.log("decodeGbp")
+    this.grayArrays =[]
+    this.byteArrayIndex = 0
+    this.byteArray = byteArray
+    for (let i=0;i<bPageLength;i++){
+        this.grayArrays.push(new Array(config['outWidth']))
+        for (let j=0;j<config['outWidth'];j++){
+            this.grayArrays[i][j]=new Array(config['outHeight'])
+        }
+    }
+    let maxRowSkip=config['maxBRowNum']+1
+    let maxColumnSkip=config['maxBColumnNum']+1;
+    for(let w=0;;w+=maxRowSkip){
+        if(w>=config['outWidth']-1) {
+            w=config['outWidth']-1
+        }
+        for(let h=0;h<config['outHeight']-1;h+=maxColumnSkip){
+            decodeBPageBasis(beforePageArray[w][h],afterPageArray[w][h],this,w,h,bPageLength)
+            if(h!=0){
+                decodeBPageColumn(this, w, h-maxColumnSkip,maxColumnSkip,bPageLength)
+                if(h+maxColumnSkip>=config['outHeight']-1){
+                    decodeBPageBasis(beforePageArray[w][config['outHeight']-1],afterPageArray[w][config['outHeight']-1],this,w,h,bPageLength)
+                    decodeBPageColumn(this, w, h,config['outHeight']-1-h,bPageLength)
+                }
+            }
+        }
+        if(w!=0){
+            decodeBPageRow(this,w-maxRowSkip,maxRowSkip,bPageLength)
+        }
+        if(w>=config['outWidth']-1){
+            break
+        }
+    }
+    return this.grayArrays
 }
 
-function getBPageGrayArray(beforePageArray,afterPageArray,binArrays,config,index) {
-    let d_index=0
-    let grayArrays=[]
-    for (let i=0;i<config['outHeight'];i++){
-        grayArrays.push(new Array(config['outWidth']))
+function decodeBPageBasis(beforePageBasisPoint,afterPageBasisPoint,object,w,h,betweenPageLength){
+    let pd = beforePageBasisPoint - afterPageBasisPoint
+    if(pd < 0){
+        pd = -pd
     }
-    let pointSkip=config['bPointNum']+1
-    let pageSkip=config['bPageNum']+1
-    for (let h=0;h<config['outHeight'];h+=pointSkip) {
-        for (let w=0;w<config['outWidth'];w+=pointSkip){
-            let bd=beforePageArray[h][w]-afterPageArray[h][w]
-            if (bd<0) {
-                bd=-bd
-            }
-            if (bd>pageSkip){
-                for (let ps=0;ps<config['bPageNum'];ps++){
-                    grayArrays[ps][h][w] = binArrays[ps][d_index++]
+    for(let p=0;p<betweenPageLength;p++) {
+        if (pd > betweenPageLength + 1) {
+            object.grayArrays[p][w][h] = object.byteArray[object.byteArrayIndex++]
+        } else if(pd==0){
+            object.grayArrays[p][w][h] = beforePageBasisPoint
+        }else{
+            if(beforePageBasisPoint > afterPageBasisPoint){
+                if(p + 1 < pd){
+                    object.grayArrays[p][w][h] = beforePageBasisPoint - (p + 1)
+                } else {
+                    object.grayArrays[p][w][h] = beforePageBasisPoint - pd
                 }
-            }else{
-                let d=beforePageArray[h][w]-afterPageArray[h][w]
-                if (d<0){
-                    d=-d
-                }
-                if (beforePageArray[h][w]>afterPageArray[h][w]) {
-                    if(ps<d){
-                        reGrayArrays[ps][h][w]=beforePageArray[h][w]-uint8(ps)
-                    }else{
-                        reGrayArrays[ps][h][w]=beforePageArray[h][w]-uint8(d)
-                    }
-                }else{
-                    if(ps<d){
-                        reGrayArrays[ps][h][w]=beforePageArray[h][w]+uint8(ps)
-                    }else{
-                        reGrayArrays[ps][h][w]=beforePageArray[h][w]+uint8(d)
-                    }
+            } else {
+                if(p + 1 < pd){
+                    object.grayArrays[p][w][h] = beforePageBasisPoint + (p + 1)
+                } else {
+                    object.grayArrays[p][w][h] = beforePageBasisPoint + pd
                 }
             }
-            grayArrays[h][w]=basisArrays[h/skip][w/skip]
-            if (w!=0) {
-                let d=grayArrays[h][w-skip]- grayArrays[h][w]
-                if (d<0){
-                    d=-d
+        }
+    }
+}
+
+function decodeBPageColumn(object,w,ch,columnSkip,betweenPageLength) {
+    for(let p=0;p<betweenPageLength;p++){
+        let beforeColumnPoint = object.grayArrays[p][w][ch]
+        let afterColumnPoint = object.grayArrays[p][w][ch + columnSkip]
+        let cd = beforeColumnPoint - afterColumnPoint
+        if (cd < 0) {
+            cd = -cd
+        }
+        for (let cs = 1; cs < columnSkip; cs++) {
+            let h = ch + cs
+            if (cd > columnSkip) {
+                object.grayArrays[p][w][h] = object.byteArray[object.byteArrayIndex++]
+            } else if (cd == 0) {
+                object.grayArrays[p][w][h] = beforeColumnPoint
+            } else {
+                if (beforeColumnPoint > afterColumnPoint) {
+                    if (cs < cd) {
+                        object.grayArrays[p][w][h] = beforeColumnPoint - cs
+                    } else {
+                        object.grayArrays[p][w][h] = beforeColumnPoint - cd
+                    }
+                } else {
+                    if (cs < cd) {
+                        object.grayArrays[p][w][h] = beforeColumnPoint + cs
+                    } else {
+                        object.grayArrays[p][w][h] = beforeColumnPoint + cd
+                    }
                 }
-                for (let ws=1;ws<skip;ws++){
-                    if (d==0){
-                        grayArrays[h][w -skip+ws] = grayArrays[h][w]
-                    }else if (d>skip){
-                        grayArrays[h][w -skip+ws]=differenceArray[d_index++]
-                    }else {
-                        if (grayArrays[h][w - skip] > grayArrays[h][w]) {
-                            if (ws < d) {
-                                grayArrays[h][w -skip + ws] = grayArrays[h][w -skip] - ws
-                            } else {
-                                grayArrays[h][w -skip + ws] = grayArrays[h][w -skip] - d
-                            }
+            }
+        }
+    }
+}
+
+function decodeBPageRow(object,rw,rowSkip,betweenPageLength) {
+    for(let p=0;p<betweenPageLength;p++) {
+        let beforeRowColumn=object.grayArrays[p][rw]
+        let afterRowColumn=object.grayArrays[p][rw+rowSkip]
+        let len = beforeRowColumn.length
+        for (let h = 0; h < len; h++) {
+            let rd = beforeRowColumn[h] - afterRowColumn[h]
+            if (rd < 0) {
+                rd = -rd
+            }
+            for (let rs = 1; rs < rowSkip; rs++) {
+                let w = rw + rs
+                if (rd > rowSkip) {
+                    object.grayArrays[p][w][h] = object.byteArray[object.byteArrayIndex++]
+                } else if (rd == 0) {
+                    object.grayArrays[p][w][h] = beforeRowColumn[h]
+                } else {
+                    if (beforeRowColumn[h] > afterRowColumn[h]) {
+                        if (rs < rd) {
+                            object.grayArrays[p][w][h] = beforeRowColumn[h] - rs
                         } else {
-                            if (ws < d) {
-                                grayArrays[h][w -skip + ws] = grayArrays[h][w -skip] + ws
-                            } else {
-                                grayArrays[h][w -skip + ws] = grayArrays[h][w -skip] + d
-                            }
+                            object.grayArrays[p][w][h] = beforeRowColumn[h] - rd
                         }
-                    }
-                }
-            }
-            if (h!=0&&w!=0) {
-                for (let ws=0;ws<skip;ws++)
-                {
-                    let d = grayArrays[h-skip][w-skip+ws] - grayArrays[h][w-skip+ws]
-                    if (d < 0) {
-                        d = -d
-                    }
-                    for (let hs = 1; hs < skip; hs++) {
-                        if (d == 0) {
-                            grayArrays[h - skip + hs][w-skip + ws] = grayArrays[h - skip][w-skip + ws]
-                        } else if (d > skip) {
-                            grayArrays[h - skip + hs][w-skip + ws] = differenceArray[d_index++]
+                    } else {
+                        if (rs < rd) {
+                            object.grayArrays[p][w][h] = beforeRowColumn[h] + rs
                         } else {
-                            if (grayArrays[h - skip][w-skip + ws] > grayArrays[h][w-skip+ ws]) {
-                                if (hs < d) {
-                                    grayArrays[h - skip + hs][w-skip + ws] = grayArrays[h - skip][w-skip + ws] - hs
-                                } else{
-                                    grayArrays[h - skip + hs][w-skip + ws] = grayArrays[h - skip][w-skip + ws] - d
-                                }
-                            } else {
-                                if (hs < d) {
-                                    grayArrays[h - skip + hs][w-skip + ws] = grayArrays[h - skip][w-skip + ws] + hs
-                                } else{
-                                    grayArrays[h - skip + hs][w-skip + ws] = grayArrays[h - skip][w-skip + ws] + d
-                                }
-                            }
+                            object.grayArrays[p][w][h] = beforeRowColumn[h] + rd
                         }
                     }
                 }
             }
         }
     }
-    return grayArrays
 }

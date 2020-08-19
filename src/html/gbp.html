@@ -13,16 +13,16 @@
 
 配置文件：<input type="file" id="file1" accept=".json" />
 
-bin图片文件：<input type="file" id="file2" accept=".bin" />
+beforeBin图片文件：<input type="file" id="file2" accept=".bin" />
 
-bin图片文件：<input type="file" id="file2" accept=".bin" />
+afterBin图片文件：<input type="file" id="file3" accept=".bin" />
 
-gbp图片文件：<input type="file" id="file2" accept=".gbp" />
+gbp图片文件：<input type="file" id="file4" accept=".gbp" />
 
 <script type="text/javascript">
     let config=null;
-    let binArray1=null;
-    let binArray2=null;
+    let grayArray1=null;
+    let grayArray2=null;
     let file1 = document.getElementById('file1');
     file1.onchange = function () {
         let file = file1.files[0];
@@ -32,36 +32,36 @@ gbp图片文件：<input type="file" id="file2" accept=".gbp" />
             config=JSON.parse(reader.result)
         }
     }
-    let file2 = document.getElementById('file1');
+    let file2 = document.getElementById('file2');
     file2.onchange = function () {
         let file = file2.files[0];
         let reader = new FileReader();
-        reader.readAsText(file);
+        reader.readAsArrayBuffer(file);
         reader.onload = function () {
-            let byteArray = new Uint8Array(reader.result);
-            let grayArrays=[]
-            for (let i=0;i<config['outHeight'];i++) {
-                grayArrays.push(byteArray.slice(i*config['outWidth'],(i+1)*config['outWidth'])
+            let binArray=new Uint8Array(reader.result)
+            let grayArray=[]
+            for (let i=0;i<config['outWidth'];i++){
+                grayArray.push(binArray.slice(i*config['outHeight'],(i+1)*config['outHeight']))
             }
-            binArray1=grayArrays
+            grayArray1=grayArray
         }
     }
-    let file3 = document.getElementById('file1');
+    let file3 = document.getElementById('file3');
     file3.onchange = function () {
         let file = file2.files[0];
         let reader = new FileReader();
-        reader.readAsText(file);
+        reader.readAsArrayBuffer(file);
         reader.onload = function () {
-            let byteArray = new Uint8Array(reader.result);
-            let grayArrays=[]
-            for (let i=0;i<config['outHeight'];i++) {
-                grayArrays.push(byteArray.slice(i*config['outWidth'],(i+1)*config['outWidth'])
+            let binArray=new Uint8Array(reader.result)
+            let grayArray=[]
+            for (let i=0;i<config['outWidth'];i++){
+                grayArray.push(binArray.slice(i*config['outHeight'],(i+1)*config['outHeight']))
             }
-            binArray2=grayArrays
+            grayArray2=grayArray
         }
     }
-    let file2 = document.getElementById('file2');
-    file2.onchange = function () {
+    let file4 = document.getElementById('file4');
+    file4.onchange = function () {
         if(config==null){
             window.alert('请先上传配置文件！')
         }else{
@@ -74,18 +74,19 @@ gbp图片文件：<input type="file" id="file2" accept=".gbp" />
             reader.onload = function () {
                 let time=new Date();
                 let binArray = new Uint8Array(reader.result);
-                let grayArrays=decodeGbp(binArray1, binArray2,binArray,config,1)
                 console.log('load:',new Date()-time)
+                let grayArrays=decodeGbp(grayArray1, grayArray2,binArray,config,2)
+                console.log('decode:',new Date()-time)
                 let imgData=ctx.createImageData(config['outWidth'],config['outHeight']);
-                for (let i=0;i<config['outHeight'];i++)
+                for (let i=0;i<config['outWidth'];i++)
                 {
-                    for (let j=0;j<config['outWidth'];j++)
+                    for (let j=0;j<config['outHeight'];j++)
                     {
-                        let color=grayArrays[i][j]*255/config['colorSize']
-                        imgData.data[j*4+0+i*config['outWidth']*4]=color;
-                        imgData.data[j*4+1+i*config['outWidth']*4]=color;
-                        imgData.data[j*4+2+i*config['outWidth']*4]=color;
-                        imgData.data[j*4+3+i*config['outWidth']*4]=255;
+                        let color=grayArrays[0][i][j]*255/config['colorSize']
+                        imgData.data[i*4+0+j*config['outWidth']*4]=color;
+                        imgData.data[i*4+1+j*config['outWidth']*4]=color;
+                        imgData.data[i*4+2+j*config['outWidth']*4]=color;
+                        imgData.data[i*4+3+j*config['outWidth']*4]=255;
                     }
                 }
                 ctx.putImageData(imgData,0,0);

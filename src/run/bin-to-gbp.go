@@ -18,11 +18,8 @@ func BinToGbp(binFolderPath string,gbpFolderPath string,config *lib.ConfigInfo) 
 	for i:=1;;i+=config.MaxBPageNum+1 {
 		indexb1 := i
 		indexp2 := indexb1 + config.MaxBPageNum+1
-		var gbpPaths [] string
+		var gbpPath =fmt.Sprintf("%s/%d-%d.gbp", gbpFolderPath,indexb1+1,indexp2-1)
 		var bPageGrayArrays [] [] []uint8
-		for j:=indexb1+1;j<indexp2;j++{
-			gbpPaths=append(gbpPaths,fmt.Sprintf("%s/%d.gbp", gbpFolderPath,j) )
-		}
 
 		bin1Path := fmt.Sprintf("%s/%d.bin", binFolderPath, indexb1)
 		bin2Path := fmt.Sprintf("%s/%d.bin", binFolderPath, indexp2)
@@ -54,15 +51,11 @@ func BinToGbp(binFolderPath string,gbpFolderPath string,config *lib.ConfigInfo) 
 			bPageGrayArrays=append(bPageGrayArrays,grayArrays)
 		}
 
-		arrays := lib.TranscodeGbp(grayArrays1, grayArrays2, bPageGrayArrays,config)
-
-		for i,_ :=range gbpPaths{
-			err = lib.ArraySaveAsBufferFile(arrays[i], gbpPaths[i])
-			if err != nil {
-				return err
-			}
+		byteArray := lib.TranscodeGbp(grayArrays1, grayArrays2, bPageGrayArrays,config)
+		err = lib.ArraySaveAsBufferFile(byteArray, gbpPath)
+		if err != nil {
+			return err
 		}
-
 	}
 
 	fmt.Println("BinToGpp Success")
