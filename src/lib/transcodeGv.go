@@ -18,16 +18,15 @@ func TranscodeGV(array [] [] []uint8,config *ConfigInfo) [] uint8 {
 		BPageArrays=append(BPageArrays,_BPageArrays)
 	}
 	var IPageArray [] uint8
-	//for _,arr :=range IPageArrays{
-	//	IPageArray=append(IPageArray,TranscodeGip(arr,config)...)
-	//}
+	for _,arr :=range IPageArrays{
+		byteArray,_:=TranscodeGip(arr,config)
+		IPageArray=append(IPageArray,byteArray...)
+	}
 	var BPageArray [] uint8
-	//for i,arr :=range BPageArrays{
-	//	_BPageArrays:=TranscodeGbp(IPageArrays[i],IPageArrays[i+1],arr,config)
-	//	for _,arr :=range _BPageArrays{
-	//		BPageArray=append(BPageArray,arr)
-	//	}
-	//}
+	for i,arr :=range BPageArrays{
+		byteArray,_:=TranscodeGbp(IPageArrays[i],IPageArrays[i+1],arr,config)
+		BPageArray=append(BPageArray,byteArray...)
+	}
 	outArray:=append(IPageArray,BPageArray...)
 	return outArray
 }

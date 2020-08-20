@@ -1,4 +1,4 @@
-function decodeGV(array,config){
+function decodeGv(binArray,config){
     console.log("decodeGV")
     return
 }

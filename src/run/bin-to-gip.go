@@ -22,7 +22,7 @@ func BinToGip(binFolderPath string,gipFolderPath string,reBinFolderPath string,c
 			return err
 		}
 	}
-	for i:=1;;i++{
+	for i:=1;;i+=config.MaxBPageNum+1{
 		gipPath:=fmt.Sprintf("%s/%d.gip",gipFolderPath,i)
 		_, err = os.Stat(gipPath)
 		if err == nil {

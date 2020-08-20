@@ -15,7 +15,6 @@ func BinToGv(binFolderPath string,gvFolderPath string,config *lib.ConfigInfo) er
 			return err
 		}
 	}
-
 	var arrs [] [] []uint8
 	index:=1
 	for i:=1;;i++{
@@ -24,11 +23,8 @@ func BinToGv(binFolderPath string,gvFolderPath string,config *lib.ConfigInfo) er
 		if err != nil {
 			break
 		}
-		var grayArrays [][]uint8
-		for j:=0;j<config.OutHeight;j++ {
-			grayArrays=append(grayArrays,byteArray[j*config.OutWidth:(j+1)*config.OutWidth])
-		}
-		arrs= append(arrs, grayArrays)
+		var grayArray=lib.ByteArrayToGrayArray(byteArray,config)
+		arrs= append(arrs, grayArray)
 		if i%(config.GvSeconds*config.OutFrame)==0 {
 			array:=lib.TranscodeGV(arrs,config)
 			lib.ArraySaveAsBufferFile(array,fmt.Sprintf("%s/%d.gv",gvFolderPath,index))

@@ -19,6 +19,10 @@ func BinToGbp(binFolderPath string,gbpFolderPath string,reBinFolderPath string,c
 		reBinIndex1 := i
 		reBinIndex2 := reBinIndex1 + config.MaxBPageNum+1
 		var gbpPath =fmt.Sprintf("%s/%d-%d.gbp", gbpFolderPath,reBinIndex1+1,reBinIndex2-1)
+		_, err = os.Stat(gbpPath)
+		if err == nil {
+			continue
+		}
 		var bPageGrayArrays [] [] []uint8
 
 		reBinPath1 := fmt.Sprintf("%s/%d.bin", reBinFolderPath, reBinIndex1)
@@ -30,14 +34,14 @@ func BinToGbp(binFolderPath string,gbpFolderPath string,reBinFolderPath string,c
 
 		reBinByteArray1, err := ioutil.ReadFile(reBinPath1)
 		if err != nil {
-			return err
+			break
 		}
 
 		reBinGrayArray1:=lib.ByteArrayToGrayArray(reBinByteArray1,config)
 
 		reBinByteArray2, err := ioutil.ReadFile(reBinPath2)
 		if err != nil {
-			return err
+			break
 		}
 
 		reBinGrayArrays2:=lib.ByteArrayToGrayArray(reBinByteArray2,config)
@@ -45,7 +49,7 @@ func BinToGbp(binFolderPath string,gbpFolderPath string,reBinFolderPath string,c
 		for _,path :=range binPaths{
 			byteArray, err := ioutil.ReadFile(path)
 			if err != nil {
-				return err
+				break
 			}
 			grayArrays:=lib.ByteArrayToGrayArray(byteArray,config)
 			bPageGrayArrays=append(bPageGrayArrays,grayArrays)

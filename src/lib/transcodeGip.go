@@ -13,13 +13,11 @@ func TranscodeGip(IPageArray [][] uint8,config *ConfigInfo) ([] uint8,[][] uint8
 			w=config.OutWidth-1
 		}
 		for h:=0;;h+=maxColumnSkip {
-			byteArray = append(byteArray, IPageArray[w][h])
-			reGrayArray[w][h]= IPageArray[w][h]
+			transcodeIPageBasis(IPageArray,&byteArray,&reGrayArray,w,h)
 			if h!=0 {
 				transcodeIPageColumn(reGrayArray[w][h-maxColumnSkip], reGrayArray[w][h], IPageArray[w][h-maxColumnSkip+1:h], &byteArray, &reGrayArray, w, h-maxColumnSkip)
 				if h+maxColumnSkip >= config.OutHeight-1{
-					byteArray = append(byteArray, IPageArray[w][config.OutHeight-1])
-					reGrayArray[w][config.OutHeight-1]= IPageArray[w][config.OutHeight-1]
+					transcodeIPageBasis(IPageArray,&byteArray,&reGrayArray,w,config.OutHeight-1)
 					transcodeIPageColumn(reGrayArray[w][h], reGrayArray[w][config.OutHeight-1], IPageArray[w][h+1:config.OutHeight-1], &byteArray, &reGrayArray, w, h)
 					break
 				}
@@ -33,6 +31,11 @@ func TranscodeGip(IPageArray [][] uint8,config *ConfigInfo) ([] uint8,[][] uint8
 		}
 	}
 	return byteArray,reGrayArray
+}
+
+func transcodeIPageBasis(IPageArray [] [] uint8,byteArray *[]uint8,reGrayArray *[][]uint8,w int,h int) {
+	*byteArray = append(*byteArray, IPageArray[w][h])
+	(*reGrayArray)[w][h]= IPageArray[w][h]
 }
 
 func transcodeIPageColumn(beforeColumnPoint uint8,afterColumnPoint uint8,betweenColumnPoints [] uint8,byteArray *[] uint8,reGrayArray *[] [] uint8,w int ,ch int) {

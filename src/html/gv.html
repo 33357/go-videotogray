@@ -4,7 +4,6 @@
     <meta charset="utf-8"> 
     <script type="text/javascript" src="/js/decodeGv.js"></script>
     <script type="text/javascript" src="/js/decodeGip.js"></script>
-    <script type="text/javascript" src="/js/decodeGpp.js"></script>
     <script type="text/javascript" src="/js/decodeGbp.js"></script>
     <title>gp</title> 
 </head>
@@ -43,7 +42,7 @@ gv视频文件：<input type="file" id="file2" accept=".gv" />
             reader.onload = function () {
                 let time=new Date();
                 let array = new Uint8Array(reader.result);
-                let grayArrays=decodeGV(array,config)
+                let grayArrays=decodeGv(array,config)
                 console.log('load:',new Date()-time)
                 let imgData=ctx.createImageData(config['outWidth'],config['outHeight']);
                 for (let i=0;i<config['outHeight'];i++)
