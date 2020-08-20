@@ -48,7 +48,7 @@ gbp图片文件：<input type="file" id="file4" accept=".gbp" />
     }
     let file3 = document.getElementById('file3');
     file3.onchange = function () {
-        let file = file2.files[0];
+        let file = file3.files[0];
         let reader = new FileReader();
         reader.readAsArrayBuffer(file);
         reader.onload = function () {
@@ -65,7 +65,7 @@ gbp图片文件：<input type="file" id="file4" accept=".gbp" />
         if(config==null){
             window.alert('请先上传配置文件！')
         }else{
-            let file = file2.files[0];
+            let file = file4.files[0];
             let c=document.getElementById("myCanvas");
             let ctx=c.getContext("2d");
             //读取为二进制

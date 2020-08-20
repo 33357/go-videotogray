@@ -13,13 +13,14 @@ function decodeGip(byteArray, config){
             maxRowSkip=config['outWidth']-1-(w-maxRowSkip)
             w=config['outWidth']-1
         }
-        for(let h=0;h<config['outHeight']-1;h+=maxColumnSkip){
+        for(let h=0;;h+=maxColumnSkip){
             this.grayArray[w][h]=this.byteArray[this.byteArrayIndex++]
             if(h!=0){
                 decodeIPageColumn(this.grayArray[w][h-maxColumnSkip],this.grayArray[w][h],this,maxColumnSkip,w,h-maxColumnSkip)
                 if(h+maxColumnSkip>=config['outHeight']-1){
                     this.grayArray[w][config['outHeight']-1]=this.byteArray[this.byteArrayIndex++]
                     decodeIPageColumn(this.grayArray[w][h],this.grayArray[w][config['outHeight']-1],this,config['outHeight']-1-h,w,h)
+                    break
                 }
             }
         }
@@ -31,24 +32,6 @@ function decodeGip(byteArray, config){
         }
     }
     return this.grayArray
-}
-
-function getIPageBasisArrays(binArray,config,maxRowSkip,maxColumnSkip){
-    let basisArrayHeight
-    let basisArrayWidth
-    let otherHeight=config['outHeight']-1
-    let otherWidth=config['outWidth']-1
-    if(otherHeight%maxColumnSkip==0){
-        basisArrayHeight=Math.floor(otherHeight/maxColumnSkip)+1
-    }else{
-        basisArrayHeight=Math.floor(otherHeight/maxColumnSkip)+2
-    }
-    if(otherWidth%maxRowSkip==0){
-        basisArrayWidth=Math.floor(otherWidth/maxRowSkip)+1
-    }else{
-        basisArrayWidth=Math.floor(otherWidth/maxRowSkip)+2
-    }
-    return [binArray.slice(0,basisArrayWidth*basisArrayHeight),binArray.slice(basisArrayWidth*basisArrayHeight)]
 }
 
 function decodeIPageColumn(beforeColumnPoint,afterColumnPoint,object,columnSkip,w,ch) {

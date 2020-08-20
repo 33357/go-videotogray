@@ -7,10 +7,17 @@ import (
 "os"
 )
 
-func BinToGip(binFolderPath string,gipFolderPath string,config *lib.ConfigInfo) error{
+func BinToGip(binFolderPath string,gipFolderPath string,reBinFolderPath string,config *lib.ConfigInfo) error{
 	_, err := os.Stat(gipFolderPath)
 	if err != nil {
-		err:=os.MkdirAll(gipFolderPath,os.ModePerm)
+		err=os.MkdirAll(gipFolderPath,os.ModePerm)
+		if err!=nil{
+			return err
+		}
+	}
+	_, err = os.Stat(reBinFolderPath)
+	if err != nil {
+		err=os.MkdirAll(reBinFolderPath,os.ModePerm)
 		if err!=nil{
 			return err
 		}
@@ -26,9 +33,15 @@ func BinToGip(binFolderPath string,gipFolderPath string,config *lib.ConfigInfo) 
 		if err != nil {
 			break
 		}
+		reBinPath:=fmt.Sprintf("%s/%d.bin",reBinFolderPath,i)
 		grayArray:=lib.ByteArrayToGrayArray(byteArray,config)
-		array:=lib.TranscodeGip(grayArray,config)
-		err=lib.ArraySaveAsBufferFile(array,gipPath)
+		byteArray,reGrayArray:=lib.TranscodeGip(grayArray,config)
+		reBinArray:=lib.GrayArrayToByteArray(reGrayArray,config)
+		err=lib.ArraySaveAsBufferFile(byteArray,gipPath)
+		if err != nil {
+			return err
+		}
+		err=lib.ArraySaveAsBufferFile(reBinArray,reBinPath)
 		if err != nil {
 			return err
 		}

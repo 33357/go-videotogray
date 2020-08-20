@@ -47,9 +47,9 @@ func GrayArrayToByteArray(grayArray [] [] uint8,config *ConfigInfo)[]uint8 {
 }
 
 func ByteArrayToGrayArray(byteArray [] byte,config *ConfigInfo)[][]uint8  {
-	var grayArrays [][]uint8
+	var grayArray [][]uint8
 	for i := 0; i < config.OutWidth; i++ {
-		grayArrays = append(grayArrays, byteArray[i*config.OutHeight:(i+1)*config.OutHeight])
+		grayArray = append(grayArray, byteArray[i*config.OutHeight:(i+1)*config.OutHeight])
 	}
-	return grayArrays
+	return grayArray
 }

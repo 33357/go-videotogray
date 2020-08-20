@@ -1,6 +1,6 @@
 package lib
 
-func TranscodeGbp(beforePageArray [] []uint8,afterPageArray [] [] uint8,BPageArrays[] [] [] uint8,config *ConfigInfo) [] uint8 {
+func TranscodeGbp(beforePageArray [] []uint8,afterPageArray [] [] uint8,BPageArrays[] [] [] uint8,config *ConfigInfo) ([] uint8,[][][] uint8) {
 	bPageLength:=len(BPageArrays)
 	var byteArray [] uint8
 	reGrayArrays := make([][][]uint8, bPageLength)
@@ -17,13 +17,14 @@ func TranscodeGbp(beforePageArray [] []uint8,afterPageArray [] [] uint8,BPageArr
 			maxRowSkip=config.OutWidth-1-(w-maxRowSkip)
 			w = config.OutWidth - 1
 		}
-		for h := 0; h < config.OutHeight-1; h += maxColumnSkip {
-			transcodeBPageBasis(beforePageArray[w][h],afterPageArray[w][h],BPageArrays,&reGrayArrays,&byteArray,w,h)
+		for h := 0;;h += maxColumnSkip {
+			transcodeBPageBasis(beforePageArray[w][h],afterPageArray[w][h],BPageArrays,&byteArray,&reGrayArrays,w,h)
 			if h!=0 {
-				transcodeBPageColumn(BPageArrays, &reGrayArrays, &byteArray, w, h-maxColumnSkip,maxColumnSkip)
+				transcodeBPageColumn(BPageArrays, &byteArray, &reGrayArrays, w, h-maxColumnSkip,maxColumnSkip)
 				if h+maxColumnSkip >= config.OutHeight-1{
-					transcodeBPageBasis(beforePageArray[w][config.OutHeight-1],afterPageArray[w][config.OutHeight-1],BPageArrays,&reGrayArrays,&byteArray,w,config.OutHeight-1)
-					transcodeBPageColumn(BPageArrays, &reGrayArrays, &byteArray, w, h,config.OutHeight-1-h)
+					transcodeBPageBasis(beforePageArray[w][config.OutHeight-1],afterPageArray[w][config.OutHeight-1],BPageArrays,&byteArray,&reGrayArrays,w,config.OutHeight-1)
+					transcodeBPageColumn(BPageArrays, &byteArray, &reGrayArrays, w, h,config.OutHeight-1-h)
+					break
 				}
 			}
 		}
@@ -34,10 +35,10 @@ func TranscodeGbp(beforePageArray [] []uint8,afterPageArray [] [] uint8,BPageArr
 			}
 		}
 	}
-	return byteArray
+	return byteArray,reGrayArrays
 }
 
-func transcodeBPageBasis(beforePagePoint uint8,afterPagePoint uint8 ,betweenPageArrays [][][] uint8,reGrayArrays *[][][]uint8,byteArray *[]uint8,w int,h int) {
+func transcodeBPageBasis(beforePagePoint uint8,afterPagePoint uint8 ,betweenPageArrays [][][] uint8,byteArray *[]uint8,reGrayArrays *[][][]uint8,w int,h int) {
 	pd := int(beforePagePoint) - int(afterPagePoint)
 	if pd < 0 {
 		pd = -pd
@@ -48,17 +49,18 @@ func transcodeBPageBasis(beforePagePoint uint8,afterPagePoint uint8 ,betweenPage
 			*byteArray = append(*byteArray, betweenPageArrays[p][w][h])
 			(*reGrayArrays)[p][w][h] = betweenPageArrays[p][w][h]
 		}else if pd==0{
-			(*reGrayArrays)[p][w][h] =beforePagePoint
+			(*reGrayArrays)[p][w][h] = beforePagePoint
 		}else{
+			ps:=p+1
 			if beforePagePoint > afterPagePoint {
-				if p+1 < pd {
-					(*reGrayArrays)[p][w][h] = beforePagePoint - uint8(p+1)
+				if ps < pd {
+					(*reGrayArrays)[p][w][h] = beforePagePoint - uint8(ps)
 				} else {
 					(*reGrayArrays)[p][w][h] = beforePagePoint - uint8(pd)
 				}
 			} else {
-				if p+1 < pd {
-					(*reGrayArrays)[p][w][h] = beforePagePoint + uint8(p+1)
+				if ps < pd {
+					(*reGrayArrays)[p][w][h] = beforePagePoint + uint8(ps)
 				} else {
 					(*reGrayArrays)[p][w][h] = beforePagePoint + uint8(pd)
 				}
@@ -67,7 +69,7 @@ func transcodeBPageBasis(beforePagePoint uint8,afterPagePoint uint8 ,betweenPage
 	}
 }
 
-func transcodeBPageColumn(betweenPageArrays [][][] uint8,reGrayArrays *[][][] uint8,byteArray *[] uint8,w int ,ch int,columnSkip int) {
+func transcodeBPageColumn(betweenPageArrays [][][] uint8,byteArray *[] uint8,reGrayArrays *[][][] uint8,w int ,ch int,columnSkip int) {
 	betweenPageLength := len(betweenPageArrays)
 	for p := 0; p < betweenPageLength; p++ {
 		beforeColumnPoint:=(*reGrayArrays)[p][w][ch]
@@ -79,8 +81,8 @@ func transcodeBPageColumn(betweenPageArrays [][][] uint8,reGrayArrays *[][][] ui
 		for cs := 1; cs < columnSkip; cs++ {
 			h := ch + cs
 			if cd > columnSkip {
-				*byteArray = append(*byteArray, betweenPageArrays[p][w][cs-1])
-				(*reGrayArrays)[p][w][h] = betweenPageArrays[p][w][cs-1]
+				*byteArray = append(*byteArray, betweenPageArrays[p][w][h])
+				(*reGrayArrays)[p][w][h] = betweenPageArrays[p][w][h]
 			} else if cd == 0 {
 				(*reGrayArrays)[p][w][h] = beforeColumnPoint
 			} else {
@@ -109,13 +111,31 @@ func transcodeBPageRow(betweenPageArrays [][][] uint8,reGrayArrays *[][][] uint8
 		afterRowColumn:=(*reGrayArrays)[p][rw+rowSkip]
 		length := len(beforeRowColumn)
 		for h := 0; h < length; h++ {
-			cd := int(beforeRowColumn[h]) - int(afterRowColumn[h])
-			if cd < 0 {
-				cd = -cd
+			rd := int(beforeRowColumn[h]) - int(afterRowColumn[h])
+			if rd < 0 {
+				rd = -rd
 			}
-			if cd > rowSkip {
-				for rs := 1; rs < rowSkip; rs++ {
-					*byteArray = append(*byteArray, betweenPageArrays[p][rw+rs][h])
+			for rs := 1; rs < rowSkip; rs++ {
+				w := rw + rs
+				if rd > rowSkip {
+					*byteArray = append(*byteArray, betweenPageArrays[p][w][h])
+					(*reGrayArrays)[p][w][h] = betweenPageArrays[p][w][h]
+				}else if rd == 0 {
+					(*reGrayArrays)[p][w][h] = beforeRowColumn[h]
+				} else {
+					if beforeRowColumn[h] > afterRowColumn[h] {
+						if rs < rd {
+							(*reGrayArrays)[p][w][h] = beforeRowColumn[h] - uint8(rs)
+						} else {
+							(*reGrayArrays)[p][w][h] = beforeRowColumn[h] - uint8(rd)
+						}
+					} else {
+						if rs < rd {
+							(*reGrayArrays)[p][w][h] = beforeRowColumn[h] + uint8(rs)
+						} else {
+							(*reGrayArrays)[p][w][h] = beforeRowColumn[h] + uint8(rd)
+						}
+					}
 				}
 			}
 		}

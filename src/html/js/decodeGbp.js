@@ -15,13 +15,14 @@ function decodeGbp(beforePageArray,afterPageArray,byteArray,config,bPageLength){
         if(w>=config['outWidth']-1) {
             w=config['outWidth']-1
         }
-        for(let h=0;h<config['outHeight']-1;h+=maxColumnSkip){
+        for(let h=0;;h+=maxColumnSkip){
             decodeBPageBasis(beforePageArray[w][h],afterPageArray[w][h],this,w,h,bPageLength)
             if(h!=0){
                 decodeBPageColumn(this, w, h-maxColumnSkip,maxColumnSkip,bPageLength)
                 if(h+maxColumnSkip>=config['outHeight']-1){
                     decodeBPageBasis(beforePageArray[w][config['outHeight']-1],afterPageArray[w][config['outHeight']-1],this,w,h,bPageLength)
                     decodeBPageColumn(this, w, h,config['outHeight']-1-h,bPageLength)
+                    break
                 }
             }
         }
@@ -41,20 +42,21 @@ function decodeBPageBasis(beforePageBasisPoint,afterPageBasisPoint,object,w,h,be
         pd = -pd
     }
     for(let p=0;p<betweenPageLength;p++) {
+        let ps=p+1
         if (pd > betweenPageLength + 1) {
             object.grayArrays[p][w][h] = object.byteArray[object.byteArrayIndex++]
         } else if(pd==0){
             object.grayArrays[p][w][h] = beforePageBasisPoint
         }else{
             if(beforePageBasisPoint > afterPageBasisPoint){
-                if(p + 1 < pd){
-                    object.grayArrays[p][w][h] = beforePageBasisPoint - (p + 1)
+                if(ps < pd){
+                    object.grayArrays[p][w][h] = beforePageBasisPoint - ps
                 } else {
                     object.grayArrays[p][w][h] = beforePageBasisPoint - pd
                 }
             } else {
-                if(p + 1 < pd){
-                    object.grayArrays[p][w][h] = beforePageBasisPoint + (p + 1)
+                if(ps < pd){
+                    object.grayArrays[p][w][h] = beforePageBasisPoint + ps
                 } else {
                     object.grayArrays[p][w][h] = beforePageBasisPoint + pd
                 }
