@@ -1,7 +1,7 @@
-function decodeGbp(beforePageArray,afterPageArray,byteArray,config,bPageLength){
+function decodeGbp(beforePageArray,afterPageArray,byteArray,config,bPageLength,byteArrayIndex){
     console.log("decodeGbp")
     this.grayArrays =[]
-    this.byteArrayIndex = 0
+    this.byteArrayIndex = byteArrayIndex
     this.byteArray = byteArray
     for (let i=0;i<bPageLength;i++){
         this.grayArrays.push(new Array(config['outWidth']))
@@ -33,7 +33,7 @@ function decodeGbp(beforePageArray,afterPageArray,byteArray,config,bPageLength){
             break
         }
     }
-    return this.grayArrays
+    return [this.grayArrays,this.byteArrayIndex]
 }
 
 function decodeBPageBasis(beforePageBasisPoint,afterPageBasisPoint,object,w,h,betweenPageLength){

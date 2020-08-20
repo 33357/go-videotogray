@@ -1,7 +1,7 @@
-function decodeGip(byteArray, config){
+function decodeGip(byteArray,config,byteArrayIndex){
     console.log('decodeGip')
     this.grayArray =[]
-    this.byteArrayIndex = 0
+    this.byteArrayIndex = byteArrayIndex
     this.byteArray=byteArray
     for (let i=0;i<config['outWidth'];i++){
         this.grayArray.push(new Array(config['outHeight']))
@@ -31,7 +31,7 @@ function decodeGip(byteArray, config){
             }
         }
     }
-    return this.grayArray
+    return this.grayArray,this.byteArrayIndex
 }
 
 function decodeIPageColumn(beforeColumnPoint,afterColumnPoint,object,columnSkip,w,ch) {
@@ -84,9 +84,9 @@ function decodeIPageRow(beforeRowColumn,afterRowColumn,object,rowSkip,rw) {
                         object.grayArray[w][h] =beforeRowColumn[h] - rd
                     }
                 } else {
-                    if (rs < rd) {
+                    if (rs < rd){
                         object.grayArray[w][h] =beforeRowColumn[h] + rs
-                    } else{
+                    }else{
                         object.grayArray[w][h] =beforeRowColumn[h] + rd
                     }
                 }
