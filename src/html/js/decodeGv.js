@@ -11,7 +11,7 @@ function decodeGv(byteArray,config){
     let BPageGrayArrays
     [BeforeIPageGrayArray,this.byteArrayIndex]=decodeGip(this.byteArray,config,this.byteArrayIndex)
     grayArrays.push(BeforeIPageGrayArray)
-    for (let i=4;;i+=pageSkip){
+    for (let i=1+pageSkip;;i+=pageSkip){
         if (i > length) {
             pageSkip=length-(i-pageSkip)
             i = length
