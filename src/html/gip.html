@@ -41,7 +41,7 @@ gip图片文件：<input type="file" id="file2" accept=".gip" />
                 let time=new Date();
                 let binArray = new Uint8Array(reader.result);
                 console.log('load:',new Date()-time)
-                let grayArray=decodeGip(binArray,config)
+                let [grayArray,_]=decodeGip(binArray,config,0)
                 console.log('decode:',new Date()-time)
                 let imgData=ctx.createImageData(config['outWidth'],config['outHeight']);
                 for (let i=0;i<config['outWidth'];i++)

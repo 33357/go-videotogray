@@ -10,6 +10,7 @@ func TranscodeGip(IPageArray [][] uint8,config *ConfigInfo) ([] uint8,[][] uint8
 	maxColumnSkip:=config.MaxBColumnNum+1
 	for w:=0;;w+=maxRowSkip {
 		if w>config.OutWidth-1 {
+			maxRowSkip=config.OutWidth-1-(w-maxRowSkip)
 			w=config.OutWidth-1
 		}
 		for h:=0;;h+=maxColumnSkip {

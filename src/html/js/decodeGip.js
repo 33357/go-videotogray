@@ -1,3 +1,4 @@
+console.log('load decodeGip')
 function decodeGip(byteArray,config,byteArrayIndex){
     console.log('decodeGip')
     this.grayArray =[]
@@ -14,11 +15,11 @@ function decodeGip(byteArray,config,byteArrayIndex){
             w=config['outWidth']-1
         }
         for(let h=0;;h+=maxColumnSkip){
-            this.grayArray[w][h]=this.byteArray[this.byteArrayIndex++]
+            decodeIPageBasis(this,w,h)
             if(h!=0){
                 decodeIPageColumn(this.grayArray[w][h-maxColumnSkip],this.grayArray[w][h],this,maxColumnSkip,w,h-maxColumnSkip)
                 if(h+maxColumnSkip>=config['outHeight']-1){
-                    this.grayArray[w][config['outHeight']-1]=this.byteArray[this.byteArrayIndex++]
+                    decodeIPageBasis(this,w,config['outHeight']-1)
                     decodeIPageColumn(this.grayArray[w][h],this.grayArray[w][config['outHeight']-1],this,config['outHeight']-1-h,w,h)
                     break
                 }
@@ -31,7 +32,12 @@ function decodeGip(byteArray,config,byteArrayIndex){
             }
         }
     }
-    return this.grayArray,this.byteArrayIndex
+    console.log(this.byteArrayIndex-byteArrayIndex)
+    return [this.grayArray,this.byteArrayIndex]
+}
+
+function decodeIPageBasis(object,w,h) {
+    object.grayArray[w][h]=object.byteArray[object.byteArrayIndex++]
 }
 
 function decodeIPageColumn(beforeColumnPoint,afterColumnPoint,object,columnSkip,w,ch) {

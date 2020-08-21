@@ -75,7 +75,7 @@ gbp图片文件：<input type="file" id="file4" accept=".gbp" />
                 let time=new Date();
                 let binArray = new Uint8Array(reader.result);
                 console.log('load:',new Date()-time)
-                let grayArrays=decodeGbp(grayArray1, grayArray2,binArray,config,2)
+                let [grayArrays,_]=decodeGbp(grayArray1, grayArray2,binArray,config,2,0)
                 console.log('decode:',new Date()-time)
                 let imgData=ctx.createImageData(config['outWidth'],config['outHeight']);
                 for (let i=0;i<config['outWidth'];i++)

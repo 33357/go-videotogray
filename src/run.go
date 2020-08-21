@@ -26,6 +26,7 @@ func main() {
 	//gbpFolderPath:=strings.Replace(binFolderPath,"bin",fmt.Sprintf("gbp/br%d_bc%d_bg%d",config.MaxBRowNum,config.MaxBColumnNum,config.MaxBPageNum),1)
 	gvFolderPath:=strings.Replace(binFolderPath,"bin",fmt.Sprintf("gv/br%d_bc%d_bg%d_gv%d",config.MaxBRowNum,config.MaxBColumnNum,config.MaxBPageNum,config.GvSeconds),1)
 	//zipFolderPath:=strings.Replace(binFolderPath,"bin",fmt.Sprintf("zip/bpo%d_bpg%d_gv%d_zip%d_mp3%s",config.BPointNum,config.BPageNum,config.GvSeconds,config.ZipSeconds,config.Mp3Bit),1)
+	//configFolderPath:=strings.Replace(binFolderPath,"bin",fmt.Sprintf("config/br%d_bc%d_bg%d_gv%d",config.MaxBRowNum,config.MaxBColumnNum,config.MaxBPageNum,config.GvSeconds),1)
 
 	err=run.VideoToSource(sourceFolderPath,mp3Path,pngFolderPath,config)
 	if err != nil {
@@ -40,10 +41,6 @@ func main() {
 	//	fmt.Printf(err.Error())
 	//}
 	//err=run.BinToGbp(binFolderPath,gbpFolderPath,reBinFolderPath,config)
-	//if err != nil {
-	//	fmt.Printf(err.Error())
-	//}
-	//err=run.BinToGpp(binFolderPath,gppFolderPath,reBinFolderPath,config)
 	//if err != nil {
 	//	fmt.Printf(err.Error())
 	//}

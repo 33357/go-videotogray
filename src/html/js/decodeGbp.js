@@ -1,3 +1,4 @@
+console.log('load decodeGbp')
 function decodeGbp(beforePageArray,afterPageArray,byteArray,config,bPageLength,byteArrayIndex){
     console.log("decodeGbp")
     this.grayArrays =[]
@@ -13,6 +14,7 @@ function decodeGbp(beforePageArray,afterPageArray,byteArray,config,bPageLength,b
     let maxColumnSkip=config['maxBColumnNum']+1;
     for(let w=0;;w+=maxRowSkip){
         if(w>=config['outWidth']-1) {
+            maxRowSkip=config['outWidth']-1-(w-maxRowSkip)
             w=config['outWidth']-1
         }
         for(let h=0;;h+=maxColumnSkip){
@@ -20,7 +22,7 @@ function decodeGbp(beforePageArray,afterPageArray,byteArray,config,bPageLength,b
             if(h!=0){
                 decodeBPageColumn(this, w, h-maxColumnSkip,maxColumnSkip,bPageLength)
                 if(h+maxColumnSkip>=config['outHeight']-1){
-                    decodeBPageBasis(beforePageArray[w][config['outHeight']-1],afterPageArray[w][config['outHeight']-1],this,w,h,bPageLength)
+                    decodeBPageBasis(beforePageArray[w][config['outHeight']-1],afterPageArray[w][config['outHeight']-1],this,w,config['outHeight']-1,bPageLength)
                     decodeBPageColumn(this, w, h,config['outHeight']-1-h,bPageLength)
                     break
                 }
@@ -33,6 +35,7 @@ function decodeGbp(beforePageArray,afterPageArray,byteArray,config,bPageLength,b
             break
         }
     }
+    console.log(this.byteArrayIndex-byteArrayIndex)
     return [this.grayArrays,this.byteArrayIndex]
 }
 

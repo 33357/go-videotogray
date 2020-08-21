@@ -2,13 +2,9 @@
 <html>
 <head> 
     <meta charset="utf-8"> 
-    <script type="text/javascript" src="/js/decodeGv.js"></script>
     <script type="text/javascript" src="/js/decodeGip.js"></script>
     <script type="text/javascript" src="/js/decodeGbp.js"></script>
-    <script type="text/javascript" src="/js/playGrayVideo.js"></script>
-    <script type="text/javascript" src="/js/jzip.min.js"></script>
-    <script type="text/javascript" src="/js/jzip-utils.min.js"></script>
-    <script type="text/javascript" src="/js/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="/js/decodeGv.js"></script>
     <title>gp</title> 
 </head>
 <body>
@@ -23,6 +19,9 @@ gv视频文件：<input type="file" id="file2" accept=".gv" />
 
 <script type="text/javascript">
     let config=null;
+    let grayArrays;
+    let index=0;
+    let clock;
     let file1 = document.getElementById('file1');
     file1.onchange = function () {
         let file = file1.files[0];
@@ -38,32 +37,41 @@ gv视频文件：<input type="file" id="file2" accept=".gv" />
             window.alert('请先上传配置文件！')
         }else{
             let file = file2.files[0];
-            let c=document.getElementById("myCanvas");
-            let ctx=c.getContext("2d");
-            //读取为二进制
             let reader = new FileReader();
             reader.readAsArrayBuffer(file);
             reader.onload = function () {
                 let time=new Date();
                 let array = new Uint8Array(reader.result);
-                let grayArrays=decodeGv(array,config)
+                grayArrays=decodeGv(array,config)
                 console.log('load:',new Date()-time)
-                let imgData=ctx.createImageData(config['outWidth'],config['outHeight']);
-                for (let i=0;i<config['outHeight'];i++)
-                {
-                    for (let j=0;j<config['outWidth'];j++)
-                    {
-                        let color=grayArrays[i][j]*255/config['colorSize']
-                        imgData.data[j*4+0+i*config['outWidth']*4]=color;
-                        imgData.data[j*4+1+i*config['outWidth']*4]=color;
-                        imgData.data[j*4+2+i*config['outWidth']*4]=color;
-                        imgData.data[j*4+3+i*config['outWidth']*4]=255;
-                    }
-                }
-                ctx.putImageData(imgData,0,0);
-                console.log('draw:',new Date()-time)
+                index=0
+                clock=setInterval(show,1000/config['outFrame']);
             }
         }
+    }
+    function show(){
+        let time=new Date();
+        let c=document.getElementById("myCanvas");
+        let ctx=c.getContext("2d");
+        let imgData=ctx.createImageData(config['outWidth'],config['outHeight']);
+        console.log(index)
+        for (let i=0;i<config['outWidth'];i++)
+        {
+            for (let j=0;j<config['outHeight'];j++)
+            {
+                let color=grayArrays[index][i][j]*255/config['colorSize']
+                imgData.data[i*4+0+j*config['outWidth']*4]=color;
+                imgData.data[i*4+1+j*config['outWidth']*4]=color;
+                imgData.data[i*4+2+j*config['outWidth']*4]=color;
+                imgData.data[i*4+3+j*config['outWidth']*4]=255;
+            }
+        }
+        ctx.putImageData(imgData,0,0);
+        index++
+        if(index>=config['outFrame']*config['gvSeconds']){
+            clearInterval(clock)
+        }
+        console.log('draw:',new Date()-time)
     }
 </script>
 

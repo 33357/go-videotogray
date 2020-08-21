@@ -1,26 +1,38 @@
+console.log('load decodeGv')
 function decodeGv(byteArray,config){
-    console.log("decodeGV")
+    console.log("decodeGv")
     this.byteArray=byteArray
     this.byteArrayIndex=0
     let grayArrays=[]
     let pageSkip=config['maxBPageNum']+1
     let length=config['gvSeconds']*config['outFrame']
-    let IPageGrayArray
+    let BeforeIPageGrayArray
+    let AfterIPageGrayArray
     let BPageGrayArrays
-    for (let i=0;i<length;i+=pageSkip) {
-        [IPageGrayArray,this.byteArrayIndex]=decodeGip(this.byteArray,config,this.byteArrayIndex)
-        grayArrays.push(IPageGrayArray)
-        for(let j=1;j<pageSkip&&i+j<length;j++) {
-            if(i+j==length-1){
-                [IPageGrayArray,this.byteArrayIndex]=decodeGip(this.byteArray,config,this.byteArrayIndex)
-                grayArrays.push(IPageGrayArray)
-            }else{
-                [BPageGrayArrays,this.byteArrayIndex]=decodeGbp(byteArray,config,config['maxBPageNum'],this.byteArrayIndex)
-                for (let k=0;k<BPageGrayArrays.length;k++){
-                    grayArrays.push(BPageGrayArrays[i])
-                }
-            }
+    [BeforeIPageGrayArray,this.byteArrayIndex]=decodeGip(this.byteArray,config,this.byteArrayIndex)
+    grayArrays.push(BeforeIPageGrayArray)
+    for (let i=4;;i+=pageSkip){
+        if (i > length) {
+            pageSkip=length-(i-pageSkip)
+            i = length
+        }
+        console.log(i);
+        [AfterIPageGrayArray,this.byteArrayIndex]=decodeGip(this.byteArray,config,this.byteArrayIndex);
+        if(this.byteArrayIndex==this.byteArray.length){
+            grayArrays.push(AfterIPageGrayArray)
+            break
+        }
+        console.log(this.byteArrayIndex,pageSkip-1);
+        [BPageGrayArrays,this.byteArrayIndex]=decodeGbp(BeforeIPageGrayArray,AfterIPageGrayArray,this.byteArray,config,pageSkip-1,this.byteArrayIndex)
+        for (let j=0;j<BPageGrayArrays.length;j++){
+            grayArrays.push(BPageGrayArrays[j])
+        }
+        grayArrays.push(AfterIPageGrayArray)
+        BeforeIPageGrayArray=AfterIPageGrayArray
+        if(i == length){
+            break
         }
     }
+    console.log(grayArrays.length)
     return grayArrays
 }
